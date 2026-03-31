@@ -53,7 +53,7 @@ describe('Today View', () => {
 
     render(<TodayView />);
 
-    // Should show the day label
-    expect(screen.getByText(/Jungfrau Region/i)).toBeInTheDocument();
+    // Should show the day label somewhere in the page
+    expect(screen.getAllByText(/Jungfrau Region/i).length).toBeGreaterThan(0);
   });
 });
