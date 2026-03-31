@@ -1,0 +1,329 @@
+{
+  "project_name": "TripCompanion",
+  "prd_issue_number": null,
+  "last_updated": "2026-03-31T14:00:00Z",
+  "current_phase": "Phase 3: Parallel TDD Execution",
+  "overall_progress": {
+    "completed": 0,
+    "total": 6
+  },
+  "status_legend": ["Not Started", "In Progress", "Completed", "Blocked", "Deferred"],
+  "execution_plan": {
+    "strategy": "sequential",
+    "test_command": "npx vitest run",
+    "budget_config": {
+      "default_max_turns": 50,
+      "escalation_threshold": 0.8,
+      "hard_stop": false
+    },
+    "waves": [
+      {
+        "wave": 1,
+        "milestone_number": null,
+        "tasks": ["1.1"],
+        "rationale": "Tracer bullet must land first — all subsequent tasks depend on the data store, timezone engine, and project scaffold."
+      },
+      {
+        "wave": 2,
+        "milestone_number": null,
+        "tasks": ["1.2", "1.3"],
+        "rationale": "Transit Cards and Section Theming both depend on Wave 1 but not on each other. No shared files — Transit Card touches TransitCard component + getNextTransit; Theming touches SectionThemeProvider + getAccommodation."
+      },
+      {
+        "wave": 3,
+        "milestone_number": null,
+        "tasks": ["1.4"],
+        "rationale": "Timeline View depends on Section Theming (Wave 2) for themed section headers."
+      },
+      {
+        "wave": 4,
+        "milestone_number": null,
+        "tasks": ["1.5"],
+        "rationale": "Day Detail View depends on Timeline View (Wave 3) for navigation source."
+      },
+      {
+        "wave": 5,
+        "milestone_number": null,
+        "tasks": ["1.6"],
+        "rationale": "PWA wraps the complete app — depends on all views being built."
+      }
+    ]
+  },
+  "tracks": [
+    {
+      "id": 1,
+      "name": "TripCompanion App",
+      "goal": "Build a glance-first PWA for multi-country trip itinerary management",
+      "branch_strategy": "feature/task-{id}",
+      "tasks": [
+        {
+          "id": "1.1",
+          "name": "Tracer Bullet: Trip Data Store + Date/Timezone Engine + Today View",
+          "issue_number": 1,
+          "execution_type": "AFK",
+          "status": "Not Started",
+          "scope": "Next.js scaffold, trip-data.ts with typed data + query functions, Date/Timezone Engine, Today View page with section/day/activities",
+          "acceptance_criteria": [
+            "Next.js project scaffolded with TypeScript, App Router, static export",
+            "trip-data.ts defines typed Trip/Section/Day/Activity data and exports query functions",
+            "Placeholder data covers all 4 sections with at least 2 days each",
+            "Date/Timezone Engine correctly computes cumulative day number from trip start",
+            "isToday() works across timezone boundaries",
+            "Today View renders section name, Day N, formatted date, and activity list",
+            "Before-trip and after-trip states render appropriate messages",
+            "Deploys to Vercel and renders correctly on iPhone viewport"
+          ],
+          "eval_ids": [
+            "FE-001-HP-01", "FE-001-EC-01", "FE-001-EC-02",
+            "FE-003-HP-01", "FE-003-EC-01",
+            "FE-011-HP-01", "FE-011-EC-01", "FE-011-EC-02", "FE-011-EC-03",
+            "FE-013-HP-01", "FE-014-HP-01",
+            "FE-008-EC-01",
+            "INT-001", "INT-007"
+          ],
+          "eval_results": {},
+          "files_to_modify": [
+            "package.json",
+            "tsconfig.json",
+            "next.config.js",
+            "src/lib/trip-data.ts",
+            "src/lib/timezone.ts",
+            "src/app/page.tsx",
+            "src/app/layout.tsx",
+            "src/app/globals.css",
+            "src/__tests__/trip-data.test.ts",
+            "src/__tests__/timezone.test.ts",
+            "src/__tests__/today-view.test.tsx"
+          ],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "Scaffold Next.js with App Router; use output:'export' in next.config; use Intl.DateTimeFormat for timezone formatting — no date-fns/luxon; co-locate query functions in trip-data.ts with the data; Plus Jakarta Sans for headings, Inter for body via Google Fonts; cream base #FFFBF5",
+          "context_needed": ["docs/architecture.md", "docs/prd.md", "docs/evals.json", "plans/tripcompanion.md"],
+          "branch": "feature/task-1.1",
+          "depends_on": [],
+          "wave": 1,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null
+        },
+        {
+          "id": "1.2",
+          "name": "Transit Cards + Next Transit on Today View",
+          "issue_number": 2,
+          "execution_type": "AFK",
+          "status": "Not Started",
+          "scope": "Transit Card component, getNextTransit() query function, Next Transit Banner on Today View",
+          "acceptance_criteria": [
+            "Transit Card renders all fields: type icon, carrier, reference, origin/destination with local times, app note",
+            "getNextTransit(from) returns the first transit event after the given datetime, crossing section boundaries",
+            "Departure time shown in departure city timezone, arrival in arrival city timezone",
+            "App note renders in italic muted text when present, hidden when absent",
+            "Today View shows Next Transit Banner prominently; hidden when no future transit exists",
+            "Multiple transit types work: flight, train, ferry"
+          ],
+          "eval_ids": [
+            "FE-002-HP-01", "FE-002-EC-01", "FE-002-EC-02",
+            "FE-007-HP-01", "FE-007-HP-02", "FE-007-HP-03", "FE-007-EC-01",
+            "FE-008-HP-01",
+            "FE-009-HP-01", "FE-009-EC-01",
+            "INT-003", "INT-006"
+          ],
+          "eval_results": {},
+          "files_to_modify": [
+            "src/lib/trip-data.ts",
+            "src/components/TransitCard.tsx",
+            "src/app/page.tsx",
+            "src/__tests__/transit-card.test.tsx",
+            "src/__tests__/get-next-transit.test.ts"
+          ],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "Add getNextTransit(from: Date) to trip-data.ts; TransitCard is presentational — receives all data as props; use formatLocalTime from timezone.ts for time display; transit type icons: plane for flight, train for train, ship for ferry",
+          "context_needed": ["docs/architecture.md", "src/lib/trip-data.ts", "src/lib/timezone.ts", "src/app/page.tsx"],
+          "branch": "feature/task-1.2",
+          "depends_on": ["1.1"],
+          "wave": 2,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null
+        },
+        {
+          "id": "1.3",
+          "name": "Section Theming + Accommodation Card",
+          "issue_number": 3,
+          "execution_type": "AFK",
+          "status": "Not Started",
+          "scope": "SectionThemeProvider, Accommodation Card, getAccommodation() query, theme integration into Today View",
+          "acceptance_criteria": [
+            "SectionThemeProvider maps all 4 section IDs to correct accent colors",
+            "Unknown section ID falls back to neutral gray",
+            "CSS custom properties available to all child components",
+            "Accommodation Card renders hotel icon, name, and address",
+            "getAccommodation(date) returns the hotel for the given date's section",
+            "Today View section header banner uses section accent as background color",
+            "Transit Card left border uses section accent color"
+          ],
+          "eval_ids": [
+            "FE-010-HP-01",
+            "FE-012-HP-01", "FE-012-HP-02", "FE-012-EC-01",
+            "INT-005"
+          ],
+          "eval_results": {},
+          "files_to_modify": [
+            "src/lib/trip-data.ts",
+            "src/components/SectionThemeProvider.tsx",
+            "src/components/AccommodationCard.tsx",
+            "src/app/page.tsx",
+            "src/app/globals.css",
+            "src/__tests__/section-theming.test.tsx",
+            "src/__tests__/accommodation-card.test.tsx"
+          ],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "SectionThemeProvider sets --section-accent and --section-accent-10 as CSS custom properties on a wrapper div; color map: switzerland=#DC2626, tomorrowland=#7C3AED, rhodes=#2563EB, turkey=#0D9488; getAccommodation resolves via section lookup from date",
+          "context_needed": ["docs/architecture.md", "src/lib/trip-data.ts", "src/app/page.tsx", "src/app/globals.css"],
+          "branch": "feature/task-1.3",
+          "depends_on": ["1.1"],
+          "wave": 2,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null
+        },
+        {
+          "id": "1.4",
+          "name": "Timeline View + Bottom Navigation",
+          "issue_number": 4,
+          "execution_type": "AFK",
+          "status": "Not Started",
+          "scope": "Timeline page at /timeline, section-grouped day rows, auto-scroll to today, bottom nav bar",
+          "acceptance_criteria": [
+            "Timeline View renders all 4 sections in chronological order with themed headers",
+            "Each section header shows destination name and date range",
+            "Day rows show cumulative day number, weekday, date, and summary label",
+            "Current day has accent-colored left border",
+            "Page auto-scrolls to current day on mount",
+            "Bottom navigation bar with two tabs (Today / Timeline), active tab highlighted",
+            "Before/after trip: all days shown, none highlighted",
+            "Day rows are tappable (link to /day/[date])"
+          ],
+          "eval_ids": [
+            "FE-004-HP-01",
+            "FE-005-HP-01",
+            "FE-006-HP-01", "FE-006-EC-01",
+            "INT-002",
+            "NF-002", "NF-003", "NF-004"
+          ],
+          "eval_results": {},
+          "files_to_modify": [
+            "src/app/timeline/page.tsx",
+            "src/components/BottomNav.tsx",
+            "src/app/layout.tsx",
+            "src/__tests__/timeline-view.test.tsx",
+            "src/__tests__/bottom-nav.test.tsx"
+          ],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "Use getAllSections() for data; group days under section headers; auto-scroll via useEffect + scrollIntoView on the current-day element; bottom nav uses <nav> with aria-current='page' on active tab; day rows are Next.js Links to /day/[date]",
+          "context_needed": ["docs/architecture.md", "src/lib/trip-data.ts", "src/lib/timezone.ts", "src/components/SectionThemeProvider.tsx"],
+          "branch": "feature/task-1.4",
+          "depends_on": ["1.1", "1.3"],
+          "wave": 3,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null
+        },
+        {
+          "id": "1.5",
+          "name": "Day Detail View",
+          "issue_number": 5,
+          "execution_type": "AFK",
+          "status": "Not Started",
+          "scope": "Day Detail page at /day/[date], back nav, transit cards + activities + accommodation for a single day",
+          "acceptance_criteria": [
+            "Route /day/[date] renders Day Detail View for the given date",
+            "Back navigation returns to Timeline View",
+            "Day header shows day badge, full date, and section name",
+            "All transit cards for the day render in chronological order",
+            "Activities card shows full activity list",
+            "Accommodation card shows hotel for that day's section",
+            "Days with no transit show activities and accommodation only",
+            "Invalid date parameter redirects to Timeline View"
+          ],
+          "eval_ids": [
+            "FE-006-HP-01",
+            "INT-004"
+          ],
+          "eval_results": {},
+          "files_to_modify": [
+            "src/app/day/[date]/page.tsx",
+            "src/__tests__/day-detail-view.test.tsx"
+          ],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "Use getDayData(date) + getAccommodation(date) + getSection(date) for data; generate static params from getAllSections() for static export; redirect to /timeline for invalid dates; reuse TransitCard and AccommodationCard components",
+          "context_needed": ["docs/architecture.md", "src/lib/trip-data.ts", "src/components/TransitCard.tsx", "src/components/AccommodationCard.tsx", "src/components/SectionThemeProvider.tsx"],
+          "branch": "feature/task-1.5",
+          "depends_on": ["1.4"],
+          "wave": 4,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null
+        },
+        {
+          "id": "1.6",
+          "name": "PWA + Offline Support",
+          "issue_number": 6,
+          "execution_type": "AFK",
+          "status": "Not Started",
+          "scope": "Service worker, web manifest, cache-first offline strategy, iOS meta tags, manual refresh",
+          "acceptance_criteria": [
+            "Service worker registers and activates on first load",
+            "All static assets (HTML, JS, CSS, fonts) cached after first load",
+            "App loads fully offline after initial cache",
+            "Web manifest valid: name, short_name, start_url, display: standalone, icons (192px, 512px)",
+            "iOS meta tags: apple-mobile-web-app-capable, status-bar-style",
+            "Manual refresh option clears cache and re-fetches from network",
+            "App installable to iPhone home screen via Safari Add to Home Screen"
+          ],
+          "eval_ids": [
+            "FE-015-HP-01",
+            "FE-016-HP-01",
+            "FE-017-HP-01",
+            "NF-005", "NF-006", "NF-007"
+          ],
+          "eval_results": {},
+          "files_to_modify": [
+            "next.config.js",
+            "public/manifest.json",
+            "src/app/layout.tsx",
+            "public/icons/",
+            "src/__tests__/pwa.test.ts"
+          ],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "Use Serwist (maintained next-pwa fork) for service worker; cache-first strategy; generate icons at 192px and 512px; add apple-mobile-web-app-capable and apple-mobile-web-app-status-bar-style meta tags; manual refresh via navigator.serviceWorker.getRegistration().update()",
+          "context_needed": ["docs/architecture.md", "next.config.js", "src/app/layout.tsx"],
+          "branch": "feature/task-1.6",
+          "depends_on": ["1.4", "1.5"],
+          "wave": 5,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null
+        }
+      ]
+    }
+  ],
+  "completion_log": []
+}
