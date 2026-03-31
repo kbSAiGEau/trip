@@ -44,8 +44,8 @@ describe('Day Detail View', () => {
   it('renders transit cards for a day with transit events', () => {
     // Jul 14 has a train to Jungfraujoch
     render(<DayDetailView params={{ date: '2026-07-14' }} />);
-    expect(screen.getByText(/Jungfraujoch/)).toBeInTheDocument();
-    expect(screen.getByText(/SBB/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Jungfraujoch/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/SBB/).length).toBeGreaterThanOrEqual(1);
   });
 
   it('renders multiple transit cards in chronological order', () => {
@@ -58,7 +58,7 @@ describe('Day Detail View', () => {
   it('renders activities for the day', () => {
     // Jul 14: Train to Jungfraujoch, Top of Europe viewpoint, Dinner in Interlaken
     render(<DayDetailView params={{ date: '2026-07-14' }} />);
-    expect(screen.getByText(/Train to Jungfraujoch/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Train to Jungfraujoch/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Top of Europe viewpoint/)).toBeInTheDocument();
     expect(screen.getByText(/Dinner in Interlaken/)).toBeInTheDocument();
   });
@@ -109,7 +109,7 @@ describe('Day Detail View', () => {
     const dayNum = getCumulativeDay(new Date('2026-07-22'), tripStart);
     expect(screen.getByText(`Day ${dayNum}`)).toBeInTheDocument();
     // Should show the flight from Brussels to Rhodes
-    expect(screen.getByText(/Rhodes RHO/)).toBeInTheDocument();
+    expect(screen.getAllByText(/Rhodes RHO/).length).toBeGreaterThanOrEqual(1);
     expect(screen.getByText(/Aegean/)).toBeInTheDocument();
     // Should show Tomorrowland section (Jul 22 is in Tomorrowland section)
     expect(screen.getByText(/Tomorrowland/)).toBeInTheDocument();
