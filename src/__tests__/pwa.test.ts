@@ -1,5 +1,6 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { describe, it, expect, vi, beforeAll, beforeEach } from 'vitest';
+import { render, screen, fireEvent, cleanup } from '@testing-library/react';
+import { createElement } from 'react';
 import fs from 'fs';
 import path from 'path';
 
@@ -86,7 +87,7 @@ describe('ServiceWorkerRegister component', () => {
     });
 
     const { ServiceWorkerRegister } = await import('../components/ServiceWorkerRegister');
-    render(ServiceWorkerRegister({}));
+    render(createElement(ServiceWorkerRegister));
 
     // Should attempt to register /sw.js
     expect(registerMock).toHaveBeenCalledWith('/sw.js');
@@ -95,9 +96,13 @@ describe('ServiceWorkerRegister component', () => {
 
 // --- Manual refresh tests (FE-017-HP-01) ---
 describe('RefreshButton component', () => {
+  beforeEach(() => {
+    cleanup();
+  });
+
   it('renders a refresh/update button', async () => {
     const { RefreshButton } = await import('../components/RefreshButton');
-    render(RefreshButton({}));
+    render(createElement(RefreshButton));
 
     const button = screen.getByRole('button', { name: /refresh|update/i });
     expect(button).toBeInTheDocument();
@@ -112,7 +117,6 @@ describe('RefreshButton component', () => {
       configurable: true,
     });
 
-    // Mock caches.keys and caches.delete
     const cachesDeleteMock = vi.fn().mockResolvedValue(true);
     Object.defineProperty(globalThis, 'caches', {
       value: {
@@ -123,7 +127,6 @@ describe('RefreshButton component', () => {
       configurable: true,
     });
 
-    // Mock location.reload
     const reloadMock = vi.fn();
     Object.defineProperty(globalThis, 'location', {
       value: { ...globalThis.location, reload: reloadMock },
@@ -132,12 +135,11 @@ describe('RefreshButton component', () => {
     });
 
     const { RefreshButton } = await import('../components/RefreshButton');
-    render(RefreshButton({}));
+    render(createElement(RefreshButton));
 
     const button = screen.getByRole('button', { name: /refresh|update/i });
     fireEvent.click(button);
 
-    // Wait for async operations
     await vi.waitFor(() => {
       expect(getRegistrationMock).toHaveBeenCalled();
     });
