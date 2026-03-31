@@ -1,3 +1,8 @@
 .env
 .claude/settings.local.json
 .mcp.json
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
