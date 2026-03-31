@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getCumulativeDay, isToday } from '@/lib/timezone';
+import { getCumulativeDay, isToday, formatLocalTime } from '@/lib/timezone';
 
 describe('getCumulativeDay', () => {
   const tripStart = new Date('2026-07-12');
@@ -48,5 +48,30 @@ describe('isToday', () => {
     // function accepts a timezone and uses it.
     const result = isToday('2020-06-15', 'Pacific/Auckland');
     expect(result).toBe(false);
+  });
+});
+
+describe('formatLocalTime', () => {
+  // FE-008-EC-01: formatLocalTime handles all 4 timezone regions
+  // FE-003-HP-01: Times displayed in local timezone for current section
+
+  it('formats time in CET (Europe/Zurich)', () => {
+    const result = formatLocalTime('2026-07-14T09:30', 'Europe/Zurich');
+    expect(result).toBe('09:30');
+  });
+
+  it('formats time in EEST (Europe/Athens)', () => {
+    const result = formatLocalTime('2026-07-25T08:30', 'Europe/Athens');
+    expect(result).toBe('08:30');
+  });
+
+  it('formats time in TRT (Europe/Istanbul)', () => {
+    const result = formatLocalTime('2026-07-30T14:00', 'Europe/Istanbul');
+    expect(result).toBe('14:00');
+  });
+
+  it('formats time in AEST (Australia/Sydney)', () => {
+    const result = formatLocalTime('2026-07-12T06:00', 'Australia/Sydney');
+    expect(result).toBe('06:00');
   });
 });
