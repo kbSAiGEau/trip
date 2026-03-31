@@ -7,7 +7,7 @@ import TransitCard from '@/components/TransitCard';
 import AccommodationCard from '@/components/AccommodationCard';
 
 interface DayDetailViewProps {
-  params: { date: string };
+  params: Promise<{ date: string }>;
 }
 
 export function generateStaticParams() {
@@ -21,8 +21,8 @@ export function generateStaticParams() {
   return params;
 }
 
-export default function DayDetailView({ params }: DayDetailViewProps) {
-  const { date: dateStr } = params;
+export default async function DayDetailView({ params }: DayDetailViewProps) {
+  const { date: dateStr } = await params;
 
   // Validate date format and existence in trip data
   const dateObj = new Date(dateStr + 'T00:00:00');
