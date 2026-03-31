@@ -1,11 +1,11 @@
 {
   "project_name": "TripCompanion",
-  "last_updated": "2026-03-31T21:00:00Z",
+  "last_updated": "2026-03-31T21:19:00Z",
   "summary": {
     "total_scenarios": 48,
-    "passing": 12,
+    "passing": 29,
     "failing": 0,
-    "not_yet_tested": 36
+    "not_yet_tested": 19
   },
   "rules": {
     "when_generated": "Phase 2, after architecture.md is approved, before implementation begins",
@@ -83,8 +83,8 @@
           "scenario": "Next transit card shows the chronologically next transit event from current time",
           "input_setup": "Date is 2026-07-14 08:00 CET. Trip data has a train at 09:30 CET from Zurich to Interlaken on Jul 14.",
           "expected_output": "Next Transit Banner renders showing 'Train to Interlaken', 'SBB', reference number, '09:30 CET → 11:45 CET'.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/get-next-transit.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -93,16 +93,16 @@
           "scenario": "No transit events remaining today — shows next future transit",
           "input_setup": "Date is 2026-07-15, no transit events on Jul 15. Next transit is Jul 18 flight to Brussels.",
           "expected_output": "Next Transit Banner shows the Jul 18 flight to Brussels with date label indicating it's a future day.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/get-next-transit.test.ts",
+          "status": "PASS"
         },
         {
           "id": "FE-002-EC-02",
           "scenario": "No transit events remaining in entire trip",
           "input_setup": "Date is 2026-08-01, last transit was Jul 31. No future transit events exist.",
           "expected_output": "Next Transit Banner is hidden.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/get-next-transit.test.ts",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -127,8 +127,8 @@
           "scenario": "Transit crosses timezone boundary (departure and arrival in different zones)",
           "input_setup": "Flight departs Switzerland (Europe/Zurich) at 14:00 CET, arrives Belgium (Europe/Brussels) at 15:30 CET.",
           "expected_output": "Departure shows '14:00 CET', arrival shows '15:30 CET' (same zone in this case but correctly resolved per endpoint).",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/transit-card.test.tsx",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -203,24 +203,24 @@
           "scenario": "Transit card renders carrier, reference, departure/arrival times, and origin/destination",
           "input_setup": "TransitCard props: type='train', carrier='SBB', reference='ABC123', origin={name:'Zürich', time:'2026-07-14T09:30', timezone:'Europe/Zurich'}, destination={name:'Interlaken', time:'2026-07-14T11:45', timezone:'Europe/Zurich'}.",
           "expected_output": "Card renders: 'Train to Interlaken', 'SBB • Ref: ABC123', 'Zürich 09:30 → Interlaken 11:45 CET'.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/transit-card.test.tsx",
+          "status": "PASS"
         },
         {
           "id": "FE-007-HP-02",
           "scenario": "Flight transit card renders correctly",
           "input_setup": "TransitCard props: type='flight', carrier='Swiss Air', reference='LX1234', origin={name:'Zürich ZRH', time:'2026-07-18T14:00', timezone:'Europe/Zurich'}, destination={name:'Brussels BRU', time:'2026-07-18T15:30', timezone:'Europe/Brussels'}.",
           "expected_output": "Card renders: 'Flight to Brussels BRU', 'Swiss Air • Ref: LX1234', 'Zürich ZRH 14:00 CET → Brussels BRU 15:30 CET'.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/transit-card.test.tsx",
+          "status": "PASS"
         },
         {
           "id": "FE-007-HP-03",
           "scenario": "Ferry transit card renders correctly",
           "input_setup": "TransitCard props: type='ferry', carrier='Dodekanisos', reference='DS4421', origin={name:'Rhodes', time:'2026-07-25T08:30', timezone:'Europe/Athens'}, destination={name:'Symi', time:'2026-07-25T09:20', timezone:'Europe/Athens'}.",
           "expected_output": "Card renders: 'Ferry to Symi', 'Dodekanisos • Ref: DS4421', 'Rhodes 08:30 → Symi 09:20 EEST'.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/transit-card.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -229,8 +229,8 @@
           "scenario": "Multiple transit cards on the same day render in chronological order",
           "input_setup": "Day has ferry to Symi at 08:30 and return ferry at 16:00.",
           "expected_output": "Two transit cards rendered in order: Symi ferry first, return ferry second.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/get-next-transit.test.ts",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -245,8 +245,8 @@
           "scenario": "Departure and arrival times display in their respective local timezones",
           "input_setup": "Transit from Rhodes (Europe/Athens, EEST UTC+3) to Istanbul (Europe/Istanbul, TRT UTC+3). Departure 14:00 EEST, arrival 15:30 TRT.",
           "expected_output": "Departure displayed as '14:00 EEST', arrival displayed as '15:30 TRT'.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/transit-card.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -271,8 +271,8 @@
           "scenario": "Transit card displays app note when present",
           "input_setup": "TransitCard props include note='Use SBB Mobile app'.",
           "expected_output": "Card renders note text 'Use SBB Mobile app' in italic muted style below the time row.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/transit-card.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -281,8 +281,8 @@
           "scenario": "Transit card with no app note",
           "input_setup": "TransitCard props with note=undefined.",
           "expected_output": "No note row rendered. Card ends after the time row.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/transit-card.test.tsx",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -297,8 +297,8 @@
           "scenario": "Accommodation card displays hotel name and address for current section",
           "input_setup": "Current section is Switzerland with accommodation: hotelName='Hotel Interlaken', address='Höheweg 45, 3800 Interlaken'.",
           "expected_output": "Accommodation Card renders hotel icon, 'Hotel Interlaken' as title, 'Höheweg 45, 3800 Interlaken' as address.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/accommodation-card.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -356,16 +356,16 @@
           "scenario": "Each section applies its designated accent color",
           "input_setup": "SectionThemeProvider wraps content with sectionId='switzerland'.",
           "expected_output": "CSS custom property --section-accent is set to '#DC2626'.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/section-theming.test.tsx",
+          "status": "PASS"
         },
         {
           "id": "FE-012-HP-02",
           "scenario": "All four section colors map correctly",
           "input_setup": "Section IDs: 'switzerland', 'tomorrowland', 'rhodes', 'turkey'.",
           "expected_output": "Colors: '#DC2626', '#7C3AED', '#2563EB', '#0D9488' respectively.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/section-theming.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -374,8 +374,8 @@
           "scenario": "Unknown section ID falls back to neutral color",
           "input_setup": "SectionThemeProvider wraps content with sectionId='unknown'.",
           "expected_output": "CSS custom property --section-accent is set to a neutral gray fallback.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/section-theming.test.tsx",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -488,8 +488,8 @@
       "scenario": "Transit Card delegates time formatting to Date/Timezone Engine",
       "components_involved": ["Transit Card", "Date/Timezone Engine"],
       "expected_behaviour": "Transit Card passes origin and destination times + timezones to formatLocalTime(). Displayed times match the output of formatLocalTime() for each endpoint.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/transit-card.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "INT-004",
@@ -504,16 +504,16 @@
       "scenario": "Section Theming provider applies correct CSS custom properties for each section across views",
       "components_involved": ["Section Theming", "Today View", "Timeline View", "Day Detail View"],
       "expected_behaviour": "When section is 'switzerland', --section-accent is #DC2626 in Today View, Timeline section header, and Day Detail header. Switching to 'rhodes' section changes --section-accent to #2563EB.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/section-theming.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "INT-006",
       "scenario": "Trip Data Store getNextTransit scans across section boundaries",
       "components_involved": ["Trip Data Store", "Today View"],
       "expected_behaviour": "When current date is in Switzerland section and no more transits remain in Switzerland, getNextTransit returns the first transit in Tomorrowland section.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/get-next-transit.test.ts",
+      "status": "PASS"
     },
     {
       "id": "INT-007",

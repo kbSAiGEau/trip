@@ -1,10 +1,10 @@
 {
   "project_name": "TripCompanion",
   "prd_issue_number": null,
-  "last_updated": "2026-03-31T21:00:00Z",
+  "last_updated": "2026-03-31T21:19:00Z",
   "current_phase": "Phase 3: Parallel TDD Execution",
   "overall_progress": {
-    "completed": 1,
+    "completed": 3,
     "total": 6
   },
   "status_legend": ["Not Started", "In Progress", "Completed", "Blocked", "Deferred"],
@@ -148,7 +148,7 @@
           "name": "Transit Cards + Next Transit on Today View",
           "issue_number": 2,
           "execution_type": "AFK",
-          "status": "Not Started",
+          "status": "Completed",
           "scope": "Transit Card component, getNextTransit() query function, Next Transit Banner on Today View",
           "acceptance_criteria": [
             "Transit Card renders all fields: type icon, carrier, reference, origin/destination with local times, app note",
@@ -165,7 +165,20 @@
             "FE-009-HP-01", "FE-009-EC-01",
             "INT-003", "INT-006"
           ],
-          "eval_results": {},
+          "eval_results": {
+            "FE-002-HP-01": "PASS",
+            "FE-002-EC-01": "PASS",
+            "FE-002-EC-02": "PASS",
+            "FE-007-HP-01": "PASS",
+            "FE-007-HP-02": "PASS",
+            "FE-007-HP-03": "PASS",
+            "FE-007-EC-01": "PASS",
+            "FE-008-HP-01": "PASS",
+            "FE-009-HP-01": "PASS",
+            "FE-009-EC-01": "PASS",
+            "INT-003": "PASS",
+            "INT-006": "PASS"
+          },
           "files_to_modify": [
             "src/lib/trip-data.ts",
             "src/components/TransitCard.tsx",
@@ -173,8 +186,14 @@
             "src/__tests__/transit-card.test.tsx",
             "src/__tests__/get-next-transit.test.ts"
           ],
-          "files_touched": [],
-          "completion_notes": "",
+          "files_touched": [
+            "src/lib/trip-data.ts",
+            "src/components/TransitCard.tsx",
+            "src/app/page.tsx",
+            "src/__tests__/transit-card.test.tsx",
+            "src/__tests__/get-next-transit.test.ts"
+          ],
+          "completion_notes": "13 new tests (7 getNextTransit, 6 TransitCard). All 12 evals PASS. getNextTransit scans all sections chronologically. TransitCard is purely presentational with formatLocalTime integration. Today View shows Next Transit banner when future transit exists.",
           "agent_instructions": "Add getNextTransit(from: Date) to trip-data.ts; TransitCard is presentational — receives all data as props; use formatLocalTime from timezone.ts for time display; transit type icons: plane for flight, train for train, ship for ferry",
           "context_needed": ["docs/architecture.md", "src/lib/trip-data.ts", "src/lib/timezone.ts", "src/app/page.tsx"],
           "branch": "feature/task-1.2",
@@ -183,15 +202,18 @@
           "max_turns": 50,
           "rollback_count": 0,
           "rollback_reason": null,
-          "test_files": [],
-          "completed": null
+          "test_files": [
+            "src/__tests__/get-next-transit.test.ts",
+            "src/__tests__/transit-card.test.tsx"
+          ],
+          "completed": "2026-03-31T21:19:00Z"
         },
         {
           "id": "1.3",
           "name": "Section Theming + Accommodation Card",
           "issue_number": 3,
           "execution_type": "AFK",
-          "status": "Not Started",
+          "status": "Completed",
           "scope": "SectionThemeProvider, Accommodation Card, getAccommodation() query, theme integration into Today View",
           "acceptance_criteria": [
             "SectionThemeProvider maps all 4 section IDs to correct accent colors",
@@ -207,7 +229,13 @@
             "FE-012-HP-01", "FE-012-HP-02", "FE-012-EC-01",
             "INT-005"
           ],
-          "eval_results": {},
+          "eval_results": {
+            "FE-010-HP-01": "PASS",
+            "FE-012-HP-01": "PASS",
+            "FE-012-HP-02": "PASS",
+            "FE-012-EC-01": "PASS",
+            "INT-005": "PASS"
+          },
           "files_to_modify": [
             "src/lib/trip-data.ts",
             "src/components/SectionThemeProvider.tsx",
@@ -217,8 +245,14 @@
             "src/__tests__/section-theming.test.tsx",
             "src/__tests__/accommodation-card.test.tsx"
           ],
-          "files_touched": [],
-          "completion_notes": "",
+          "files_touched": [
+            "src/components/SectionThemeProvider.tsx",
+            "src/components/AccommodationCard.tsx",
+            "src/app/page.tsx",
+            "src/__tests__/section-theming.test.tsx",
+            "src/__tests__/accommodation-card.test.tsx"
+          ],
+          "completion_notes": "9 new tests (7 SectionThemeProvider, 2 AccommodationCard). All 5 evals PASS. SectionThemeProvider sets CSS custom properties --section-accent and --section-accent-10. AccommodationCard is presentational. Today View wrapped in SectionThemeProvider with themed header banner and AccommodationCard. globals.css and trip-data.ts unchanged (getAccommodation already existed from task 1.1).",
           "agent_instructions": "SectionThemeProvider sets --section-accent and --section-accent-10 as CSS custom properties on a wrapper div; color map: switzerland=#DC2626, tomorrowland=#7C3AED, rhodes=#2563EB, turkey=#0D9488; getAccommodation resolves via section lookup from date",
           "context_needed": ["docs/architecture.md", "src/lib/trip-data.ts", "src/app/page.tsx", "src/app/globals.css"],
           "branch": "feature/task-1.3",
@@ -227,8 +261,11 @@
           "max_turns": 50,
           "rollback_count": 0,
           "rollback_reason": null,
-          "test_files": [],
-          "completed": null
+          "test_files": [
+            "src/__tests__/section-theming.test.tsx",
+            "src/__tests__/accommodation-card.test.tsx"
+          ],
+          "completed": "2026-03-31T21:19:00Z"
         },
         {
           "id": "1.4",
