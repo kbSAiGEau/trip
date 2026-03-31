@@ -1,0 +1,352 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "roadmap.schema.json",
+  "title": "Roadmap",
+  "description": "Schema for the living task roadmap used by the Agentic Workflow Prompt Framework. Source of truth for project progress.",
+  "type": "object",
+  "required": ["project_name", "last_updated", "current_phase", "overall_progress", "status_legend", "execution_plan", "tracks", "completion_log"],
+  "properties": {
+    "_template_meta": {
+      "type": "object",
+      "description": "Metadata about the template itself. Stripped when instantiated for a real project.",
+      "properties": {
+        "version": { "type": "string" },
+        "customisation": {
+          "type": "array",
+          "items": { "type": "string" }
+        }
+      }
+    },
+    "project_name": {
+      "type": "string",
+      "description": "The project name. Replace [Project Name] when instantiating."
+    },
+    "prd_issue_number": {
+      "type": ["integer", "null"],
+      "description": "GitHub Issue number for the PRD tracking issue. Populated by /plan-to-issues."
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "ISO 8601 timestamp of the last update to this file."
+    },
+    "current_phase": {
+      "type": "string",
+      "description": "Current phase number and name (e.g., 'Phase 3: Parallel TDD Execution')."
+    },
+    "overall_progress": {
+      "type": "object",
+      "required": ["completed", "total"],
+      "properties": {
+        "completed": { "type": "integer", "minimum": 0 },
+        "total": { "type": "integer", "minimum": 0 }
+      },
+      "additionalProperties": false
+    },
+    "status_legend": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": ["Not Started", "In Progress", "Completed", "Blocked", "Deferred"]
+      },
+      "description": "Canonical task status values. Add project-specific states if needed."
+    },
+    "execution_plan": {
+      "type": "object",
+      "required": ["strategy", "test_command", "budget_config", "waves"],
+      "properties": {
+        "_comment": { "type": "string" },
+        "strategy": {
+          "type": "string",
+          "enum": ["parallel_waves", "sequential"],
+          "description": "Execution strategy. parallel_waves is the default."
+        },
+        "test_command": {
+          "type": "string",
+          "description": "Shell command to run the project's test suite (e.g., 'npm test', 'npx playwright test')."
+        },
+        "budget_config": {
+          "type": "object",
+          "required": ["default_max_turns", "escalation_threshold", "hard_stop"],
+          "properties": {
+            "default_max_turns": {
+              "type": "integer",
+              "minimum": 1,
+              "description": "Default maximum turns per task before escalation."
+            },
+            "escalation_threshold": {
+              "type": "number",
+              "minimum": 0,
+              "maximum": 1,
+              "description": "Fraction of max_turns at which to warn the implementer (e.g., 0.8 = 80%)."
+            },
+            "hard_stop": {
+              "type": "boolean",
+              "description": "If true, pause the implementer at 100% budget. If false, allow overrun with escalation."
+            }
+          },
+          "additionalProperties": false
+        },
+        "team_config": {
+          "type": "object",
+          "description": "Optional. Set by orchestrator when using agent teams. Ignored in solo/bash modes.",
+          "properties": {
+            "_comment": { "type": "string" },
+            "team_name": { "type": "string" },
+            "orchestrator": { "type": "string" },
+            "execution_mode": {
+              "type": "string",
+              "enum": ["solo", "wave_team", "full_team"],
+              "description": "Which agent team pattern is in use for this wave."
+            }
+          },
+          "additionalProperties": false
+        },
+        "waves": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "required": ["wave", "tasks", "rationale"],
+            "properties": {
+              "wave": {
+                "type": "integer",
+                "minimum": 1,
+                "description": "Wave number. Tasks within a wave run in parallel."
+              },
+              "milestone_number": {
+                "type": ["integer", "null"],
+                "description": "GitHub Milestone number. Populated by /plan-to-issues."
+              },
+              "tasks": {
+                "type": "array",
+                "items": { "type": "string" },
+                "minItems": 1,
+                "maxItems": 3,
+                "description": "Task IDs in this wave. Minimum 1, maximum 3 per wave."
+              },
+              "rationale": {
+                "type": "string",
+                "description": "Why these tasks can run in parallel (no shared dependencies or files)."
+              }
+            },
+            "additionalProperties": false
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "tracks": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/track"
+      }
+    },
+    "completion_log": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/completion_log_entry"
+      },
+      "description": "Append-only log of completed tasks."
+    }
+  },
+  "additionalProperties": false,
+  "$defs": {
+    "track": {
+      "type": "object",
+      "required": ["id", "name", "goal", "tasks"],
+      "properties": {
+        "id": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Track number."
+        },
+        "name": { "type": "string" },
+        "goal": { "type": "string" },
+        "branch_strategy": {
+          "type": "string",
+          "description": "Git branch naming convention for this track."
+        },
+        "tasks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/task"
+          }
+        }
+      },
+      "additionalProperties": false
+    },
+    "task": {
+      "type": "object",
+      "required": ["id", "name", "status", "scope", "acceptance_criteria", "eval_ids", "depends_on", "wave", "max_turns"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+$",
+          "description": "Task ID in track.sequence format (e.g., '1.1', '2.3')."
+        },
+        "name": { "type": "string" },
+        "issue_number": {
+          "type": ["integer", "null"],
+          "description": "GitHub Issue number. Populated by /plan-to-issues."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["Not Started", "In Progress", "Completed", "Blocked", "Deferred"],
+          "description": "Current task status."
+        },
+        "scope": {
+          "type": "string",
+          "description": "Brief description of what this task covers."
+        },
+        "acceptance_criteria": {
+          "type": "array",
+          "items": { "type": "string" },
+          "minItems": 1,
+          "description": "Criteria that must be met for the task to be considered complete."
+        },
+        "eval_ids": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "IDs from evals.json that this task must satisfy."
+        },
+        "eval_results": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["PASS", "FAIL", "SKIP"]
+          },
+          "description": "Map of eval_id to result. Populated after execution. PASS = test passes. FAIL = test fails. SKIP = intentionally not tested (infrastructure unavailable, dependency incomplete, or user waived). Always document SKIP reason in completion_notes. Note: This enum (PASS/FAIL/SKIP) differs intentionally from evals.json status values (NOT_TESTED/PASS/FAIL/DEPRECATED). evals.json tracks scenario lifecycle; roadmap.json tracks per-task execution results. NOT_TESTED evals are absent from eval_results; DEPRECATED evals are excluded."
+        },
+        "execution_type": {
+          "type": "string",
+          "enum": ["AFK", "HITL"],
+          "description": "AFK = fully autonomous. HITL = requires human interaction during execution."
+        },
+        "files_to_modify": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files this task expects to create or modify. Populated during Phase 2 planning. Used by wave computation for overlap detection."
+        },
+        "files_touched": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Files created or modified by this task."
+        },
+        "completion_notes": {
+          "type": "string",
+          "description": "What was done, any deviations from plan."
+        },
+        "agent_instructions": {
+          "type": "string",
+          "description": "Specific instructions for the agent executing this task. Single paragraph or semicolon-separated directives, under 500 chars. Implementation guidance that does NOT belong in acceptance_criteria."
+        },
+        "context_needed": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "pattern": "^[^/][^*?{]*$",
+            "description": "Project-root-relative file path. No leading slash. No absolute paths. No globs or wildcards."
+          },
+          "description": "Files the agent should read before starting this task."
+        },
+        "branch": {
+          "type": "string",
+          "description": "Git worktree branch name for this task (e.g., 'feature/task-1.2')."
+        },
+        "depends_on": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Task IDs that must be completed before this task can start."
+        },
+        "wave": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Which execution wave this task belongs to."
+        },
+        "max_turns": {
+          "type": "integer",
+          "minimum": 1,
+          "description": "Maximum agent turns budgeted for this task."
+        },
+        "rollback_count": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Number of times this task has been rolled back."
+        },
+        "rollback_reason": {
+          "type": ["string", "null"],
+          "description": "Reason for the most recent rollback, if any."
+        },
+        "test_files": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Test files scaffolded during the RED stage."
+        },
+        "completed": {
+          "type": ["string", "null"],
+          "description": "ISO 8601 timestamp when the task was completed. Null if not yet complete."
+        },
+        "agent_assignment": {
+          "$ref": "#/$defs/agent_assignment"
+        }
+      },
+      "additionalProperties": false
+    },
+    "agent_assignment": {
+      "type": "object",
+      "description": "Optional. Populated by orchestrator during agent team execution. Ignored in solo/bash modes.",
+      "properties": {
+        "_comment": { "type": "string" },
+        "agent_name": {
+          "type": "string",
+          "description": "Teammate name (e.g., 'impl-1.2')."
+        },
+        "agent_role": {
+          "type": "string",
+          "enum": ["orchestrator", "implementer", "reviewer", "custom"],
+          "description": "Role from agent-teams.md Section 2."
+        },
+        "worktree_path": {
+          "type": "string",
+          "description": "Path to the git worktree directory for this task."
+        },
+        "assigned_at": {
+          "type": ["string", "null"],
+          "description": "ISO 8601 timestamp when the agent was assigned."
+        },
+        "completed_at": {
+          "type": ["string", "null"],
+          "description": "ISO 8601 timestamp when the agent completed the task."
+        },
+        "preflight_passed": {
+          "type": "boolean",
+          "description": "Whether pre-flight validation passed before spawning. Set by orchestrator."
+        }
+      },
+      "additionalProperties": false
+    },
+    "completion_log_entry": {
+      "type": "object",
+      "required": ["task_id", "completed", "eval_results", "agent_notes"],
+      "properties": {
+        "task_id": {
+          "type": "string",
+          "description": "Task ID that was completed."
+        },
+        "completed": {
+          "type": "string",
+          "description": "ISO 8601 date or timestamp."
+        },
+        "eval_results": {
+          "type": "string",
+          "pattern": "^(All PASS|[0-9]+/[0-9]+ PASS(, [0-9]+ (FAIL|SKIP))*)$",
+          "description": "Summary of eval results. Format: 'All PASS' or 'N/M PASS, N FAIL, N SKIP' (e.g., 'All PASS', '3/4 PASS, 1 SKIP')."
+        },
+        "agent_notes": {
+          "type": "string",
+          "description": "Summary notes from the completing agent."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

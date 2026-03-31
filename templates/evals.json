@@ -1,0 +1,160 @@
+{
+  "_template_meta": {
+    "version": "1.0",
+    "customisation": [
+      "Replace [Project Name] with the actual project name",
+      "Add domain-specific eval categories if needed (e.g., 'compliance_evals' for fintech, 'data_integrity_evals' for ETL pipelines)",
+      "Adjust non-functional thresholds to match project requirements",
+      "For simple projects, you may have fewer features but should still cover happy path, edge cases, and failure modes for each"
+    ]
+  },
+
+  "project_name": "[Project Name]",
+  "last_updated": "[timestamp]",
+  "summary": {
+    "total_scenarios": 0,
+    "passing": 0,
+    "failing": 0,
+    "not_yet_tested": 0
+  },
+
+  "rules": {
+    "when_generated": "Phase 2, before any code is written.",
+    "how_linked": "Each subtask in roadmap.json references eval IDs it must satisfy.",
+    "when_validated": "The executing agent runs the relevant evals before marking a task complete.",
+    "adding_evals": "Append to the relevant section as the project evolves.",
+    "deprecation": "Evals are NEVER deleted. Mark status as 'DEPRECATED' with a reason in the change_log.",
+    "test_protection": "It is unacceptable to remove, delete, or weaken existing eval scenarios. If a requirement changes, deprecate the old eval and create a new one. Never edit an eval to make a failing test pass — fix the code instead."
+  },
+
+  "quality_criteria": {
+    "description": "Every eval scenario must meet these standards. If you cannot define specific inputs and expected outputs, the requirement is not clear enough — go back and clarify it.",
+    "standards": {
+      "specific_input": {
+        "good": "POST /api/users with {name: 'Jo', email: 'jo@test.com'}",
+        "bad": "Send a request"
+      },
+      "exact_expected_output": {
+        "good": "Returns 201 with {id: <uuid>, name: 'Jo'}",
+        "bad": "Returns success"
+      },
+      "single_behaviour": {
+        "good": "Empty email field returns 400 with {error: 'email required'}",
+        "bad": "Validates all fields"
+      },
+      "reproducible": {
+        "good": "Given user with id=1 exists in DB, GET /api/users/1 returns 200",
+        "bad": "Check if it works"
+      },
+      "independent": {
+        "good": "Can run without other evals passing first",
+        "bad": "Requires FE-001 to pass before this can be tested"
+      }
+    }
+  },
+
+  "testing_protocol": {
+    "tool": "Project test runner (configure per project)",
+    "approach": "Test like a human user would. Open the browser, navigate to the relevant page, click buttons, fill in forms, and visually verify what appears on screen.",
+    "instructions": [
+      "Use the project's configured test runner (specified in execution_plan.test_command in roadmap.json) to run end-to-end tests",
+      "Tests must interact with the application through the browser — clicking elements, filling inputs, reading visible text",
+      "Do NOT mock browser interactions or skip UI verification",
+      "Screenshot or trace failures for debugging when a test fails",
+      "If a test requires setup data, create it through the same UI flows a real user would use, or document the required preconditions"
+    ]
+  },
+
+  "feature_evals": [
+    {
+      "id": "FE-001",
+      "feature_name": "[Feature Name]",
+      "derived_from": "PRD Section [X.X], User Story [US-XX]",
+      "happy_path": [
+        {
+          "id": "FE-001-HP-01",
+          "scenario": "[Normal use case]",
+          "input_setup": "[Specific input or state]",
+          "expected_output": "[Exact expected result]",
+          "test_file": "",
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-001-EC-01",
+          "scenario": "[Empty input]",
+          "input_setup": "[Empty or null]",
+          "expected_output": "[Graceful handling]",
+          "test_file": "",
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-001-EC-02",
+          "scenario": "[Maximum boundary]",
+          "input_setup": "[Max size/length]",
+          "expected_output": "[Correct behaviour]",
+          "test_file": "",
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": [
+        {
+          "id": "FE-001-FM-01",
+          "scenario": "[Network failure]",
+          "input_setup": "[Disconnect during operation]",
+          "expected_output": "[Retry or graceful degradation]",
+          "test_file": "",
+          "status": "NOT_TESTED"
+        }
+      ]
+    }
+  ],
+
+  "integration_evals": [
+    {
+      "id": "INT-001",
+      "scenario": "[End-to-end workflow A]",
+      "components_involved": ["[Component X]", "[Component Y]"],
+      "expected_behaviour": "[Complete flow succeeds]",
+      "test_file": "",
+      "status": "NOT_TESTED"
+    }
+  ],
+
+  "non_functional_evals": [
+    {
+      "id": "NF-001",
+      "category": "Performance",
+      "scenario": "[Page load / response time]",
+      "threshold": "[< X ms]",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-002",
+      "category": "Security",
+      "scenario": "[Auth bypass attempt]",
+      "threshold": "[Rejected]",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-003",
+      "category": "Accessibility",
+      "scenario": "[Screen reader navigation]",
+      "threshold": "[All elements labelled]",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    }
+  ],
+
+  "change_log": [
+    {
+      "date": "[date]",
+      "eval_id": "FE-001-HP-01",
+      "change_type": "CREATED",
+      "description": "Initial generation from PRD"
+    }
+  ]
+}

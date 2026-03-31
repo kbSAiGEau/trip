@@ -1,0 +1,190 @@
+{
+  "_template_meta": {
+    "version": "1.0",
+    "customisation": [
+      "Replace [Project Name] with the actual project name",
+      "Adjust the track structure to match your project's architecture",
+      "Add or remove task fields based on project needs (e.g., add 'api_endpoints' for backend projects)",
+      "The status_legend below covers standard states; add project-specific states if needed (e.g., 'In Review')",
+      "The agent_assignment fields on tasks and team_config in execution_plan are optional — used only with agent team execution (see agent-teams.md). Ignored in solo/bash modes.",
+      "The issue_number, milestone_number, and prd_issue_number fields are populated automatically by the /plan-to-issues skill during GitHub Issue sync. Leave as null in the template. URLs are derived from the repo and number at runtime — do not store them.",
+      "Set test_command in execution_plan to match your project's test runner (default: npm test)"
+    ]
+  },
+
+  "project_name": "[Project Name]",
+  "prd_issue_number": null,
+  "last_updated": "[timestamp]",
+  "current_phase": "[phase number and name]",
+  "overall_progress": {
+    "completed": 0,
+    "total": 0
+  },
+
+  "status_legend": ["Not Started", "In Progress", "Completed", "Blocked", "Deferred"],
+
+  "execution_plan": {
+    "_comment": "Computed during Phase 2 from the dependency graph. Tasks within the same wave have no mutual dependencies and do not share files — they can run in parallel. Maximum 3 tasks per wave.",
+    "strategy": "parallel_waves",
+    "test_command": "npm test",
+    "budget_config": {
+      "default_max_turns": 50,
+      "escalation_threshold": 0.8,
+      "hard_stop": false
+    },
+    "team_config": {
+      "_comment": "Optional. Set by orchestrator when using agent team execution (see agent-teams.md). Ignored in solo/bash modes.",
+      "team_name": "",
+      "orchestrator": "",
+      "execution_mode": "solo"
+    },
+    "waves": [
+      {
+        "wave": 1,
+        "milestone_number": null,
+        "tasks": ["1.1", "1.2"],
+        "rationale": "[Why these tasks can run in parallel — e.g., no shared dependencies or files]"
+      },
+      {
+        "wave": 2,
+        "milestone_number": null,
+        "tasks": ["1.3"],
+        "rationale": "[Why this wave depends on wave 1 — e.g., 1.3 depends on 1.2]"
+      }
+    ]
+  },
+
+  "tracks": [
+    {
+      "id": 1,
+      "name": "[Track Name]",
+      "goal": "[What this track accomplishes]",
+      "branch_strategy": "[e.g., feature/phase-1-setup]",
+      "tasks": [
+        {
+          "id": "1.1",
+          "name": "[Task Name]",
+          "issue_number": null,
+          "execution_type": "AFK",
+          "status": "Completed",
+          "scope": "[Brief description of what this task covers]",
+          "acceptance_criteria": [
+            "Criterion 1",
+            "Criterion 2"
+          ],
+          "eval_ids": ["FE-001-HP-01", "FE-001-EC-01"],
+          "eval_results": {
+            "FE-001-HP-01": "PASS",
+            "FE-001-EC-01": "PASS"
+          },
+          "files_to_modify": [],
+          "files_touched": ["[list of files created/modified]"],
+          "completion_notes": "[What was done, any deviations from plan]",
+          "agent_instructions": "",
+          "context_needed": [],
+          "branch": "",
+          "depends_on": [],
+          "wave": 1,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": ["[list of test files scaffolded during RED stage]"],
+          "completed": "[timestamp]",
+          "agent_assignment": {
+            "_comment": "Optional. Populated by orchestrator during agent team execution (see agent-teams.md). Ignored in solo/bash modes.",
+            "agent_name": "",
+            "agent_role": "",
+            "worktree_path": "",
+            "assigned_at": null,
+            "completed_at": null
+          }
+        },
+        {
+          "id": "1.2",
+          "name": "[Task Name]",
+          "issue_number": null,
+          "execution_type": "AFK",
+          "status": "In Progress",
+          "scope": "[Brief description]",
+          "acceptance_criteria": [
+            "Criterion 1",
+            "Criterion 2"
+          ],
+          "eval_ids": ["FE-001-HP-02", "FE-001-EC-02", "FE-001-EC-03"],
+          "eval_results": {},
+          "files_to_modify": [],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "Use Playwright for E2E tests; follow existing auth middleware pattern in src/middleware/auth.ts; prefer server components over client components",
+          "context_needed": ["src/middleware/auth.ts", "src/components/Layout.tsx", "docs/architecture.md"],
+          "branch": "feature/task-1.2",
+          "depends_on": [],
+          "wave": 1,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null,
+          "agent_assignment": {
+            "_comment": "Optional. Populated by orchestrator during agent team execution (see agent-teams.md). Ignored in solo/bash modes.",
+            "agent_name": "",
+            "agent_role": "",
+            "worktree_path": "",
+            "assigned_at": null,
+            "completed_at": null
+          }
+        },
+        {
+          "id": "1.3",
+          "name": "[Task Name]",
+          "issue_number": null,
+          "execution_type": "AFK",
+          "status": "Not Started",
+          "scope": "[Brief description]",
+          "acceptance_criteria": [
+            "Criterion 1"
+          ],
+          "eval_ids": ["[eval IDs from evals.json]"],
+          "eval_results": {},
+          "files_to_modify": [],
+          "files_touched": [],
+          "completion_notes": "",
+          "agent_instructions": "Depends on task 1.2 output; reuse shared validation helpers from src/utils/validation.ts; add integration test covering the full request lifecycle",
+          "context_needed": ["src/utils/validation.ts", "src/services/api.ts", "docs/architecture.md"],
+          "branch": "",
+          "depends_on": ["1.2"],
+          "wave": 2,
+          "max_turns": 50,
+          "rollback_count": 0,
+          "rollback_reason": null,
+          "test_files": [],
+          "completed": null,
+          "agent_assignment": {
+            "_comment": "Optional. Populated by orchestrator during agent team execution (see agent-teams.md). Ignored in solo/bash modes.",
+            "agent_name": "",
+            "agent_role": "",
+            "worktree_path": "",
+            "assigned_at": null,
+            "completed_at": null
+          }
+        }
+      ]
+    },
+    {
+      "id": 2,
+      "name": "[Track Name]",
+      "goal": "[What this track accomplishes]",
+      "branch_strategy": "",
+      "tasks": []
+    }
+  ],
+
+  "completion_log": [
+    {
+      "task_id": "1.1",
+      "completed": "[date]",
+      "eval_results": "All PASS",
+      "agent_notes": "[summary]"
+    }
+  ]
+}

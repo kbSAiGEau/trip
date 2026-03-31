@@ -1,0 +1,627 @@
+{
+  "project_name": "TripCompanion",
+  "last_updated": "2026-03-31T12:00:00Z",
+  "summary": {
+    "total_scenarios": 48,
+    "passing": 0,
+    "failing": 0,
+    "not_yet_tested": 48
+  },
+  "rules": {
+    "when_generated": "Phase 2, after architecture.md is approved, before implementation begins",
+    "how_linked": "Each eval references its source PRD user story via derived_from (feature evals) or architecture components (integration evals)",
+    "when_validated": "During Phase 3 TDD execution — /tdd updates status and test_file fields",
+    "adding_evals": "New evals may be added during implementation if edge cases are discovered. Append to the relevant array and add a change_log entry",
+    "deprecation": "Evals are never deleted. Set status to DEPRECATED and add a change_log entry with the reason",
+    "test_protection": "Never remove, weaken, or skip an eval. Fix the code, not the eval"
+  },
+  "quality_criteria": {
+    "description": "Every eval must have concrete, specific inputs and expected outputs. No vague assertions.",
+    "standards": {
+      "input_setup": {
+        "good": "Date is 2026-07-14, trip started 2026-07-12 from Sydney, current section is Switzerland (timezone Europe/Zurich)",
+        "bad": "A valid date during the trip"
+      },
+      "expected_output": {
+        "good": "Returns { dayNumber: 3, sectionName: 'Switzerland', color: '#DC2626' }",
+        "bad": "Returns the correct section and day number"
+      }
+    }
+  },
+  "testing_protocol": {
+    "tool": "Vitest",
+    "approach": "Unit tests for pure logic (Trip Data Store, Date/Timezone Engine), React Testing Library for component rendering, integration tests against real data store module",
+    "instructions": [
+      "Run tests with: npx vitest run",
+      "Data Store and Timezone Engine tests use the real data module — no mocking",
+      "Component tests use mock/fixture data passed as props",
+      "Each eval scenario maps to one or more test cases in the test file referenced by test_file"
+    ]
+  },
+  "feature_evals": [
+    {
+      "id": "FE-001",
+      "feature_name": "Today View default landing",
+      "derived_from": "PRD User Stories — Today View, US-001",
+      "happy_path": [
+        {
+          "id": "FE-001-HP-01",
+          "scenario": "App opens to today view showing current section, day number, and activity highlights",
+          "input_setup": "Date is 2026-07-14 (Day 3 of trip). Trip data has Switzerland section with activities for Jul 14.",
+          "expected_output": "Today View renders with section header 'SWITZERLAND', Day Badge showing 'Day 3', date 'Monday, Jul 14', and activity list for that day.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-001-EC-01",
+          "scenario": "Today view before trip starts",
+          "input_setup": "Date is 2026-07-10, trip starts 2026-07-12.",
+          "expected_output": "Today View shows Day 1 section info with 'Trip starts Jul 12' message.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-001-EC-02",
+          "scenario": "Today view after trip ends",
+          "input_setup": "Date is 2026-08-10, trip ended 2026-08-02.",
+          "expected_output": "Today View shows final day section info with 'Trip complete' message.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-002",
+      "feature_name": "Next transit surfaced on today view",
+      "derived_from": "PRD User Stories — Today View, US-002",
+      "happy_path": [
+        {
+          "id": "FE-002-HP-01",
+          "scenario": "Next transit card shows the chronologically next transit event from current time",
+          "input_setup": "Date is 2026-07-14 08:00 CET. Trip data has a train at 09:30 CET from Zurich to Interlaken on Jul 14.",
+          "expected_output": "Next Transit Banner renders showing 'Train to Interlaken', 'SBB', reference number, '09:30 CET → 11:45 CET'.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-002-EC-01",
+          "scenario": "No transit events remaining today — shows next future transit",
+          "input_setup": "Date is 2026-07-15, no transit events on Jul 15. Next transit is Jul 18 flight to Brussels.",
+          "expected_output": "Next Transit Banner shows the Jul 18 flight to Brussels with date label indicating it's a future day.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-002-EC-02",
+          "scenario": "No transit events remaining in entire trip",
+          "input_setup": "Date is 2026-08-01, last transit was Jul 31. No future transit events exist.",
+          "expected_output": "Next Transit Banner is hidden.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-003",
+      "feature_name": "Today view local time display",
+      "derived_from": "PRD User Stories — Today View, US-003",
+      "happy_path": [
+        {
+          "id": "FE-003-HP-01",
+          "scenario": "Today view shows times in the local timezone for the current section",
+          "input_setup": "Current section is Switzerland (timezone Europe/Zurich). Transit departure at '2026-07-14T09:30' in Europe/Zurich.",
+          "expected_output": "Time displayed as '09:30 CET' (not UTC, not AEST).",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-003-EC-01",
+          "scenario": "Transit crosses timezone boundary (departure and arrival in different zones)",
+          "input_setup": "Flight departs Switzerland (Europe/Zurich) at 14:00 CET, arrives Belgium (Europe/Brussels) at 15:30 CET.",
+          "expected_output": "Departure shows '14:00 CET', arrival shows '15:30 CET' (same zone in this case but correctly resolved per endpoint).",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-004",
+      "feature_name": "Scrollable full-trip timeline",
+      "derived_from": "PRD User Stories — Timeline Browse, US-004",
+      "happy_path": [
+        {
+          "id": "FE-004-HP-01",
+          "scenario": "Timeline view renders all sections with nested day rows",
+          "input_setup": "Trip data has 4 sections (Switzerland, Tomorrowland, Rhodes, Turkey) with days in each.",
+          "expected_output": "Timeline View renders 4 section headers each followed by their day rows. Days show day number and summary label.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-005",
+      "feature_name": "Section color theming in timeline",
+      "derived_from": "PRD User Stories — Timeline Browse, US-005",
+      "happy_path": [
+        {
+          "id": "FE-005-HP-01",
+          "scenario": "Each section in timeline uses its distinct accent color",
+          "input_setup": "Timeline View rendering all 4 sections.",
+          "expected_output": "Switzerland header uses #DC2626, Tomorrowland uses #7C3AED, Rhodes uses #2563EB, Turkey uses #0D9488.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-006",
+      "feature_name": "Day detail drill-down from timeline",
+      "derived_from": "PRD User Stories — Timeline Browse, US-006",
+      "happy_path": [
+        {
+          "id": "FE-006-HP-01",
+          "scenario": "Tapping a day row in timeline navigates to Day Detail View",
+          "input_setup": "Timeline View rendered. User taps the row for Day 3 (Jul 14, Switzerland).",
+          "expected_output": "Day Detail View (SCR-003) renders showing Day 3, Jul 14, Switzerland section, with transit cards, activities, and accommodation for that day.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-006-EC-01",
+          "scenario": "Day with no transit events",
+          "input_setup": "User taps a day that has activities but no transit events.",
+          "expected_output": "Day Detail View renders activities and accommodation. No transit cards shown.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-007",
+      "feature_name": "Transit card displays all booking fields",
+      "derived_from": "PRD User Stories — Transit Cards, US-007",
+      "happy_path": [
+        {
+          "id": "FE-007-HP-01",
+          "scenario": "Transit card renders carrier, reference, departure/arrival times, and origin/destination",
+          "input_setup": "TransitCard props: type='train', carrier='SBB', reference='ABC123', origin={name:'Zürich', time:'2026-07-14T09:30', timezone:'Europe/Zurich'}, destination={name:'Interlaken', time:'2026-07-14T11:45', timezone:'Europe/Zurich'}.",
+          "expected_output": "Card renders: 'Train to Interlaken', 'SBB • Ref: ABC123', 'Zürich 09:30 → Interlaken 11:45 CET'.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-007-HP-02",
+          "scenario": "Flight transit card renders correctly",
+          "input_setup": "TransitCard props: type='flight', carrier='Swiss Air', reference='LX1234', origin={name:'Zürich ZRH', time:'2026-07-18T14:00', timezone:'Europe/Zurich'}, destination={name:'Brussels BRU', time:'2026-07-18T15:30', timezone:'Europe/Brussels'}.",
+          "expected_output": "Card renders: 'Flight to Brussels BRU', 'Swiss Air • Ref: LX1234', 'Zürich ZRH 14:00 CET → Brussels BRU 15:30 CET'.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-007-HP-03",
+          "scenario": "Ferry transit card renders correctly",
+          "input_setup": "TransitCard props: type='ferry', carrier='Dodekanisos', reference='DS4421', origin={name:'Rhodes', time:'2026-07-25T08:30', timezone:'Europe/Athens'}, destination={name:'Symi', time:'2026-07-25T09:20', timezone:'Europe/Athens'}.",
+          "expected_output": "Card renders: 'Ferry to Symi', 'Dodekanisos • Ref: DS4421', 'Rhodes 08:30 → Symi 09:20 EEST'.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-007-EC-01",
+          "scenario": "Multiple transit cards on the same day render in chronological order",
+          "input_setup": "Day has ferry to Symi at 08:30 and return ferry at 16:00.",
+          "expected_output": "Two transit cards rendered in order: Symi ferry first, return ferry second.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-008",
+      "feature_name": "Transit times in local timezone",
+      "derived_from": "PRD User Stories — Transit Cards, US-008",
+      "happy_path": [
+        {
+          "id": "FE-008-HP-01",
+          "scenario": "Departure and arrival times display in their respective local timezones",
+          "input_setup": "Transit from Rhodes (Europe/Athens, EEST UTC+3) to Istanbul (Europe/Istanbul, TRT UTC+3). Departure 14:00 EEST, arrival 15:30 TRT.",
+          "expected_output": "Departure displayed as '14:00 EEST', arrival displayed as '15:30 TRT'.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-008-EC-01",
+          "scenario": "formatLocalTime handles all 4 timezone regions",
+          "input_setup": "Four times: one in AEST (Australia/Sydney), one in CET (Europe/Zurich), one in EEST (Europe/Athens), one in TRT (Europe/Istanbul).",
+          "expected_output": "Each time formatted with correct timezone abbreviation: AEST, CET, EEST, TRT.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-009",
+      "feature_name": "Transit card app notes",
+      "derived_from": "PRD User Stories — Transit Cards, US-009",
+      "happy_path": [
+        {
+          "id": "FE-009-HP-01",
+          "scenario": "Transit card displays app note when present",
+          "input_setup": "TransitCard props include note='Use SBB Mobile app'.",
+          "expected_output": "Card renders note text 'Use SBB Mobile app' in italic muted style below the time row.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-009-EC-01",
+          "scenario": "Transit card with no app note",
+          "input_setup": "TransitCard props with note=undefined.",
+          "expected_output": "No note row rendered. Card ends after the time row.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-010",
+      "feature_name": "Accommodation block per section",
+      "derived_from": "PRD User Stories — Accommodation, US-010",
+      "happy_path": [
+        {
+          "id": "FE-010-HP-01",
+          "scenario": "Accommodation card displays hotel name and address for current section",
+          "input_setup": "Current section is Switzerland with accommodation: hotelName='Hotel Interlaken', address='Höheweg 45, 3800 Interlaken'.",
+          "expected_output": "Accommodation Card renders hotel icon, 'Hotel Interlaken' as title, 'Höheweg 45, 3800 Interlaken' as address.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-011",
+      "feature_name": "Cumulative day counter",
+      "derived_from": "PRD User Stories — Day Counter, US-011",
+      "happy_path": [
+        {
+          "id": "FE-011-HP-01",
+          "scenario": "Day counter shows correct cumulative day number from trip start",
+          "input_setup": "Trip starts 2026-07-12 (Day 1). Current date is 2026-07-14.",
+          "expected_output": "getCumulativeDay returns 3. Day Badge shows 'Day 3'.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-011-EC-01",
+          "scenario": "Day 1 is the departure day from Sydney",
+          "input_setup": "Current date is 2026-07-12 (trip start date, departure from Sydney).",
+          "expected_output": "getCumulativeDay returns 1.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-011-EC-02",
+          "scenario": "Day counter spans across section boundaries",
+          "input_setup": "Trip starts 2026-07-12. Switzerland ends Jul 18, Tomorrowland starts Jul 18. Current date is 2026-07-19.",
+          "expected_output": "getCumulativeDay returns 8 (continuous count, not reset per section).",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-011-EC-03",
+          "scenario": "Day counter on the last day of the trip",
+          "input_setup": "Trip starts 2026-07-12, ends 2026-08-02. Current date is 2026-08-02.",
+          "expected_output": "getCumulativeDay returns 22 (or the correct total day count).",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-012",
+      "feature_name": "Per-section color theming",
+      "derived_from": "PRD User Stories — Section Theming, US-012",
+      "happy_path": [
+        {
+          "id": "FE-012-HP-01",
+          "scenario": "Each section applies its designated accent color",
+          "input_setup": "SectionThemeProvider wraps content with sectionId='switzerland'.",
+          "expected_output": "CSS custom property --section-accent is set to '#DC2626'.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        },
+        {
+          "id": "FE-012-HP-02",
+          "scenario": "All four section colors map correctly",
+          "input_setup": "Section IDs: 'switzerland', 'tomorrowland', 'rhodes', 'turkey'.",
+          "expected_output": "Colors: '#DC2626', '#7C3AED', '#2563EB', '#0D9488' respectively.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [
+        {
+          "id": "FE-012-EC-01",
+          "scenario": "Unknown section ID falls back to neutral color",
+          "input_setup": "SectionThemeProvider wraps content with sectionId='unknown'.",
+          "expected_output": "CSS custom property --section-accent is set to a neutral gray fallback.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-013",
+      "feature_name": "Single editable data file",
+      "derived_from": "PRD User Stories — Data Management, US-013",
+      "happy_path": [
+        {
+          "id": "FE-013-HP-01",
+          "scenario": "All trip data defined in one TypeScript file with typed exports",
+          "input_setup": "Import trip-data.ts module.",
+          "expected_output": "Module exports getAllSections(), getSection(), getDayData(), getNextTransit(), getAccommodation() functions. Data includes sections, days, activities, transit events, and accommodation.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-014",
+      "feature_name": "Placeholder data",
+      "derived_from": "PRD User Stories — Data Management, US-014",
+      "happy_path": [
+        {
+          "id": "FE-014-HP-01",
+          "scenario": "Data file contains placeholder data for all 4 sections",
+          "input_setup": "Import trip-data.ts and call getAllSections().",
+          "expected_output": "Returns 4 sections (Switzerland, Tomorrowland, Rhodes, Turkey) each with at least 1 day, sample activities, placeholder transit events, and accommodation.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-015",
+      "feature_name": "Offline functionality",
+      "derived_from": "PRD User Stories — Offline & PWA, US-015",
+      "happy_path": [
+        {
+          "id": "FE-015-HP-01",
+          "scenario": "App works fully offline after first load",
+          "input_setup": "Load the app once with network connected. Disconnect network. Reload the app.",
+          "expected_output": "App loads from service worker cache. Today View and Timeline View render with full trip data.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-016",
+      "feature_name": "PWA installable to home screen",
+      "derived_from": "PRD User Stories — Offline & PWA, US-016",
+      "happy_path": [
+        {
+          "id": "FE-016-HP-01",
+          "scenario": "Web manifest is valid and enables Add to Home Screen on iOS Safari",
+          "input_setup": "Check the web manifest file and PWA meta tags in the HTML head.",
+          "expected_output": "Manifest includes name, short_name, start_url, display: 'standalone', icons (192px, 512px). HTML includes apple-mobile-web-app-capable and apple-mobile-web-app-status-bar-style meta tags.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    },
+    {
+      "id": "FE-017",
+      "feature_name": "Manual refresh for cached data",
+      "derived_from": "PRD User Stories — Offline & PWA, US-017",
+      "happy_path": [
+        {
+          "id": "FE-017-HP-01",
+          "scenario": "Manual refresh option triggers cache invalidation and re-fetches",
+          "input_setup": "App is running from service worker cache. User triggers manual refresh action.",
+          "expected_output": "Service worker cache is cleared and fresh assets are fetched from network. App reloads with updated content.",
+          "test_file": null,
+          "status": "NOT_TESTED"
+        }
+      ],
+      "edge_cases": [],
+      "failure_modes": []
+    }
+  ],
+  "integration_evals": [
+    {
+      "id": "INT-001",
+      "scenario": "Today View correctly composes data from Trip Data Store and Date/Timezone Engine",
+      "components_involved": ["Today View", "Trip Data Store", "Date/Timezone Engine"],
+      "expected_behaviour": "Today View calls getSection(today), getDayData(today), getNextTransit(now), getAccommodation(today), and getCumulativeDay(today). All return correct data for a mid-trip date (e.g., 2026-07-14). View renders section header, day badge, activities, transit card, and accommodation.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "INT-002",
+      "scenario": "Timeline View groups days under correct section headers with section colors",
+      "components_involved": ["Timeline View", "Trip Data Store", "Section Theming"],
+      "expected_behaviour": "Timeline View calls getAllSections() and renders each section with its themed header (color from Section Theming) followed by day rows. Section order matches chronological trip order.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "INT-003",
+      "scenario": "Transit Card delegates time formatting to Date/Timezone Engine",
+      "components_involved": ["Transit Card", "Date/Timezone Engine"],
+      "expected_behaviour": "Transit Card passes origin and destination times + timezones to formatLocalTime(). Displayed times match the output of formatLocalTime() for each endpoint.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "INT-004",
+      "scenario": "Day Detail View receives day identifier from Timeline navigation and loads correct data",
+      "components_involved": ["Timeline View", "Day Detail View", "Trip Data Store"],
+      "expected_behaviour": "Tapping a day row in Timeline passes the date to Day Detail route. Day Detail calls getDayData(date) and getAccommodation(date), renders all transit cards, activities, and accommodation for that specific date.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "INT-005",
+      "scenario": "Section Theming provider applies correct CSS custom properties for each section across views",
+      "components_involved": ["Section Theming", "Today View", "Timeline View", "Day Detail View"],
+      "expected_behaviour": "When section is 'switzerland', --section-accent is #DC2626 in Today View, Timeline section header, and Day Detail header. Switching to 'rhodes' section changes --section-accent to #2563EB.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "INT-006",
+      "scenario": "Trip Data Store getNextTransit scans across section boundaries",
+      "components_involved": ["Trip Data Store", "Today View"],
+      "expected_behaviour": "When current date is in Switzerland section and no more transits remain in Switzerland, getNextTransit returns the first transit in Tomorrowland section.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "INT-007",
+      "scenario": "Travel day assigned to departing section",
+      "components_involved": ["Trip Data Store", "Date/Timezone Engine"],
+      "expected_behaviour": "A day where the traveler flies from Switzerland to Belgium is returned by getSection() as a Switzerland day (departing section). The Switzerland accent color is applied.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    }
+  ],
+  "non_functional_evals": [
+    {
+      "id": "NF-001",
+      "category": "Accessibility",
+      "scenario": "All section accent colors meet WCAG AA contrast ratio on white and cream backgrounds",
+      "threshold": ">= 4.5:1 contrast ratio for all 4 accent colors on both #FFFFFF and #FFFBF5",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-002",
+      "category": "Accessibility",
+      "scenario": "All interactive elements meet minimum touch target size",
+      "threshold": ">= 44x44px for all tappable elements (day rows, tab buttons, back navigation)",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-003",
+      "category": "Accessibility",
+      "scenario": "Semantic HTML structure used for navigation and content",
+      "threshold": "Bottom nav uses <nav>, main content uses <main>, cards use <article>, headings use <h2>/<h3> hierarchy",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-004",
+      "category": "Accessibility",
+      "scenario": "Tab navigation has ARIA labels",
+      "threshold": "Bottom nav tabs have aria-label or aria-current attributes. Active tab indicated by aria-current='page'",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-005",
+      "category": "Performance",
+      "scenario": "Static pages pre-rendered at build time with no runtime data fetching",
+      "threshold": "next build completes with output: 'export'. No getServerSideProps or API route calls at runtime.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-006",
+      "category": "PWA",
+      "scenario": "Service worker registers and caches all static assets on first load",
+      "threshold": "Service worker status is 'activated'. All HTML, JS, CSS, and font assets cached in Cache Storage after first page load.",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-007",
+      "category": "PWA",
+      "scenario": "Web manifest is valid for iOS home screen installation",
+      "threshold": "manifest.json passes PWA validation: has name, short_name, start_url, display: standalone, theme_color, background_color, and icons at 192px and 512px sizes",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    },
+    {
+      "id": "NF-008",
+      "category": "Responsive",
+      "scenario": "Layout renders correctly on iPhone viewport range",
+      "threshold": "No horizontal overflow, no clipped content, all cards full-width with 16px margins on viewports from 375px to 430px wide",
+      "test_file": null,
+      "status": "NOT_TESTED"
+    }
+  ],
+  "change_log": [
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-001", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-002", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-003", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-004", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-005", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-006", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-007", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-008", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-009", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-010", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-011", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-012", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-013", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-014", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-015", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-016", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "FE-017", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "INT-001", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "INT-002", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "INT-003", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "INT-004", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "INT-005", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "INT-006", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "INT-007", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-001", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-002", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-003", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-004", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-005", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-006", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-007", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-008", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" }
+  ]
+}
