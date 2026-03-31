@@ -24,3 +24,17 @@ export function isToday(dayDate: string, timezone: string): boolean {
   const todayInTz = formatter.format(now); // "YYYY-MM-DD" in en-CA locale
   return dayDate === todayInTz;
 }
+
+/**
+ * Formats an ISO datetime string (without Z suffix) as HH:MM in the given
+ * IANA timezone. The input is treated as a wall-clock time in that timezone.
+ */
+export function formatLocalTime(isoTime: string, timezone: string): string {
+  // Parse as local wall-clock time in the target timezone.
+  // We construct a Date from the ISO string (interpreted as UTC) then use
+  // Intl to format in the target timezone. But since the input IS the local
+  // time, we just extract HH:MM directly.
+  const [, timePart] = isoTime.split('T');
+  const [hours, minutes] = timePart.split(':');
+  return `${hours}:${minutes}`;
+}
