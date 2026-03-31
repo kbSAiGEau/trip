@@ -143,8 +143,8 @@
           "scenario": "Timeline view renders all sections with nested day rows",
           "input_setup": "Trip data has 4 sections (Switzerland, Tomorrowland, Rhodes, Turkey) with days in each.",
           "expected_output": "Timeline View renders 4 section headers each followed by their day rows. Days show day number and summary label.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timeline-view.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -160,8 +160,8 @@
           "scenario": "Each section in timeline uses its distinct accent color",
           "input_setup": "Timeline View rendering all 4 sections.",
           "expected_output": "Switzerland header uses #DC2626, Tomorrowland uses #7C3AED, Rhodes uses #2563EB, Turkey uses #0D9488.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timeline-view.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -177,8 +177,8 @@
           "scenario": "Tapping a day row in timeline navigates to Day Detail View",
           "input_setup": "Timeline View rendered. User taps the row for Day 3 (Jul 14, Switzerland).",
           "expected_output": "Day Detail View (SCR-003) renders showing Day 3, Jul 14, Switzerland section, with transit cards, activities, and accommodation for that day.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timeline-view.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -480,8 +480,8 @@
       "scenario": "Timeline View groups days under correct section headers with section colors",
       "components_involved": ["Timeline View", "Trip Data Store", "Section Theming"],
       "expected_behaviour": "Timeline View calls getAllSections() and renders each section with its themed header (color from Section Theming) followed by day rows. Section order matches chronological trip order.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/timeline-view.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "INT-003",
@@ -538,24 +538,24 @@
       "category": "Accessibility",
       "scenario": "All interactive elements meet minimum touch target size",
       "threshold": ">= 44x44px for all tappable elements (day rows, tab buttons, back navigation)",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/bottom-nav.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "NF-003",
       "category": "Accessibility",
       "scenario": "Semantic HTML structure used for navigation and content",
       "threshold": "Bottom nav uses <nav>, main content uses <main>, cards use <article>, headings use <h2>/<h3> hierarchy",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/bottom-nav.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "NF-004",
       "category": "Accessibility",
       "scenario": "Tab navigation has ARIA labels",
       "threshold": "Bottom nav tabs have aria-label or aria-current attributes. Active tab indicated by aria-current='page'",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/bottom-nav.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "NF-005",
