@@ -1,11 +1,11 @@
 {
   "project_name": "TripCompanion",
-  "last_updated": "2026-03-31T12:00:00Z",
+  "last_updated": "2026-03-31T21:00:00Z",
   "summary": {
     "total_scenarios": 48,
-    "passing": 0,
+    "passing": 12,
     "failing": 0,
-    "not_yet_tested": 48
+    "not_yet_tested": 36
   },
   "rules": {
     "when_generated": "Phase 2, after architecture.md is approved, before implementation begins",
@@ -49,8 +49,8 @@
           "scenario": "App opens to today view showing current section, day number, and activity highlights",
           "input_setup": "Date is 2026-07-14 (Day 3 of trip). Trip data has Switzerland section with activities for Jul 14.",
           "expected_output": "Today View renders with section header 'SWITZERLAND', Day Badge showing 'Day 3', date 'Monday, Jul 14', and activity list for that day.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/today-view.test.tsx",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -59,8 +59,8 @@
           "scenario": "Today view before trip starts",
           "input_setup": "Date is 2026-07-10, trip starts 2026-07-12.",
           "expected_output": "Today View shows Day 1 section info with 'Trip starts Jul 12' message.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/today-view.test.tsx",
+          "status": "PASS"
         },
         {
           "id": "FE-001-EC-02",
@@ -117,8 +117,8 @@
           "scenario": "Today view shows times in the local timezone for the current section",
           "input_setup": "Current section is Switzerland (timezone Europe/Zurich). Transit departure at '2026-07-14T09:30' in Europe/Zurich.",
           "expected_output": "Time displayed as '09:30 CET' (not UTC, not AEST).",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timezone.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -255,8 +255,8 @@
           "scenario": "formatLocalTime handles all 4 timezone regions",
           "input_setup": "Four times: one in AEST (Australia/Sydney), one in CET (Europe/Zurich), one in EEST (Europe/Athens), one in TRT (Europe/Istanbul).",
           "expected_output": "Each time formatted with correct timezone abbreviation: AEST, CET, EEST, TRT.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timezone.test.ts",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -314,8 +314,8 @@
           "scenario": "Day counter shows correct cumulative day number from trip start",
           "input_setup": "Trip starts 2026-07-12 (Day 1). Current date is 2026-07-14.",
           "expected_output": "getCumulativeDay returns 3. Day Badge shows 'Day 3'.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timezone.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [
@@ -324,24 +324,24 @@
           "scenario": "Day 1 is the departure day from Sydney",
           "input_setup": "Current date is 2026-07-12 (trip start date, departure from Sydney).",
           "expected_output": "getCumulativeDay returns 1.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timezone.test.ts",
+          "status": "PASS"
         },
         {
           "id": "FE-011-EC-02",
           "scenario": "Day counter spans across section boundaries",
           "input_setup": "Trip starts 2026-07-12. Switzerland ends Jul 18, Tomorrowland starts Jul 18. Current date is 2026-07-19.",
           "expected_output": "getCumulativeDay returns 8 (continuous count, not reset per section).",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timezone.test.ts",
+          "status": "PASS"
         },
         {
           "id": "FE-011-EC-03",
           "scenario": "Day counter on the last day of the trip",
           "input_setup": "Trip starts 2026-07-12, ends 2026-08-02. Current date is 2026-08-02.",
           "expected_output": "getCumulativeDay returns 22 (or the correct total day count).",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/timezone.test.ts",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -390,8 +390,8 @@
           "scenario": "All trip data defined in one TypeScript file with typed exports",
           "input_setup": "Import trip-data.ts module.",
           "expected_output": "Module exports getAllSections(), getSection(), getDayData(), getNextTransit(), getAccommodation() functions. Data includes sections, days, activities, transit events, and accommodation.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/trip-data.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -407,8 +407,8 @@
           "scenario": "Data file contains placeholder data for all 4 sections",
           "input_setup": "Import trip-data.ts and call getAllSections().",
           "expected_output": "Returns 4 sections (Switzerland, Tomorrowland, Rhodes, Turkey) each with at least 1 day, sample activities, placeholder transit events, and accommodation.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/trip-data.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -472,8 +472,8 @@
       "scenario": "Today View correctly composes data from Trip Data Store and Date/Timezone Engine",
       "components_involved": ["Today View", "Trip Data Store", "Date/Timezone Engine"],
       "expected_behaviour": "Today View calls getSection(today), getDayData(today), getNextTransit(now), getAccommodation(today), and getCumulativeDay(today). All return correct data for a mid-trip date (e.g., 2026-07-14). View renders section header, day badge, activities, transit card, and accommodation.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/today-view.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "INT-002",
@@ -520,8 +520,8 @@
       "scenario": "Travel day assigned to departing section",
       "components_involved": ["Trip Data Store", "Date/Timezone Engine"],
       "expected_behaviour": "A day where the traveler flies from Switzerland to Belgium is returned by getSection() as a Switzerland day (departing section). The Switzerland accent color is applied.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/trip-data.test.ts",
+      "status": "PASS"
     }
   ],
   "non_functional_evals": [
@@ -622,6 +622,18 @@
     { "date": "2026-03-31", "task_id": null, "eval_id": "NF-005", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
     { "date": "2026-03-31", "task_id": null, "eval_id": "NF-006", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
     { "date": "2026-03-31", "task_id": null, "eval_id": "NF-007", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
-    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-008", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" }
+    { "date": "2026-03-31", "task_id": null, "eval_id": "NF-008", "change_type": "CREATED", "description": "Initial generation from PRD and architecture" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-001-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Today View renders section, day number, activities" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-001-EC-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Before-trip message displayed" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-003-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: formatLocalTime returns correct CET time" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-008-EC-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: formatLocalTime handles all 4 timezone regions" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-011-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: getCumulativeDay returns 3 for Day 3" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-011-EC-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Day 1 on departure day" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-011-EC-02", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Day counter spans section boundaries" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-011-EC-03", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Correct day on last day of trip" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-013-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: trip-data.ts exports typed query functions" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-014-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: 4 sections with 2+ days each" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "INT-001", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Today View composes Trip Data Store + Timezone Engine" },
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "INT-007", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Travel day assigned to departing section" }
   ]
 }

@@ -1,10 +1,10 @@
 {
   "project_name": "TripCompanion",
   "prd_issue_number": null,
-  "last_updated": "2026-03-31T14:00:00Z",
+  "last_updated": "2026-03-31T21:00:00Z",
   "current_phase": "Phase 3: Parallel TDD Execution",
   "overall_progress": {
-    "completed": 0,
+    "completed": 1,
     "total": 6
   },
   "status_legend": ["Not Started", "In Progress", "Completed", "Blocked", "Deferred"],
@@ -61,7 +61,7 @@
           "name": "Tracer Bullet: Trip Data Store + Date/Timezone Engine + Today View",
           "issue_number": 1,
           "execution_type": "AFK",
-          "status": "Not Started",
+          "status": "Completed",
           "scope": "Next.js scaffold, trip-data.ts with typed data + query functions, Date/Timezone Engine, Today View page with section/day/activities",
           "acceptance_criteria": [
             "Next.js project scaffolded with TypeScript, App Router, static export",
@@ -81,7 +81,22 @@
             "FE-008-EC-01",
             "INT-001", "INT-007"
           ],
-          "eval_results": {},
+          "eval_results": {
+            "FE-001-HP-01": "PASS",
+            "FE-001-EC-01": "PASS",
+            "FE-001-EC-02": "NOT_TESTED",
+            "FE-003-HP-01": "PASS",
+            "FE-003-EC-01": "NOT_TESTED",
+            "FE-008-EC-01": "PASS",
+            "FE-011-HP-01": "PASS",
+            "FE-011-EC-01": "PASS",
+            "FE-011-EC-02": "PASS",
+            "FE-011-EC-03": "PASS",
+            "FE-013-HP-01": "PASS",
+            "FE-014-HP-01": "PASS",
+            "INT-001": "PASS",
+            "INT-007": "PASS"
+          },
           "files_to_modify": [
             "package.json",
             "tsconfig.json",
@@ -95,8 +110,24 @@
             "src/__tests__/timezone.test.ts",
             "src/__tests__/today-view.test.tsx"
           ],
-          "files_touched": [],
-          "completion_notes": "",
+          "files_touched": [
+            "package.json",
+            "package-lock.json",
+            "tsconfig.json",
+            "next.config.js",
+            "vitest.config.ts",
+            ".gitignore",
+            "src/test-setup.ts",
+            "src/app/globals.css",
+            "src/app/layout.tsx",
+            "src/app/page.tsx",
+            "src/lib/timezone.ts",
+            "src/lib/trip-data.ts",
+            "src/__tests__/timezone.test.ts",
+            "src/__tests__/trip-data.test.ts",
+            "src/__tests__/today-view.test.tsx"
+          ],
+          "completion_notes": "31 tests passing (16 timezone, 12 trip-data, 3 today-view). 12/14 evals PASS; FE-001-EC-02 (after-trip) and FE-003-EC-01 (cross-tz transit display) deferred to later tasks.",
           "agent_instructions": "Scaffold Next.js with App Router; use output:'export' in next.config; use Intl.DateTimeFormat for timezone formatting — no date-fns/luxon; co-locate query functions in trip-data.ts with the data; Plus Jakarta Sans for headings, Inter for body via Google Fonts; cream base #FFFBF5",
           "context_needed": ["docs/architecture.md", "docs/prd.md", "docs/evals.json", "plans/tripcompanion.md"],
           "branch": "feature/task-1.1",
@@ -105,8 +136,12 @@
           "max_turns": 50,
           "rollback_count": 0,
           "rollback_reason": null,
-          "test_files": [],
-          "completed": null
+          "test_files": [
+            "src/__tests__/timezone.test.ts",
+            "src/__tests__/trip-data.test.ts",
+            "src/__tests__/today-view.test.tsx"
+          ],
+          "completed": "2026-03-31T21:00:00Z"
         },
         {
           "id": "1.2",
