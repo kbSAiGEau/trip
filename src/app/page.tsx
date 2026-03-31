@@ -1,9 +1,11 @@
 'use client';
 
-import { getAllSections, getSection, getDayData, getNextTransit, TRIP } from '@/lib/trip-data';
+import { getAllSections, getSection, getDayData, getNextTransit, getAccommodation, TRIP } from '@/lib/trip-data';
 import type { Section, DayData } from '@/lib/trip-data';
 import { getCumulativeDay, isToday, getTripStatus } from '@/lib/timezone';
 import TransitCard from '@/components/TransitCard';
+import SectionThemeProvider from '@/components/SectionThemeProvider';
+import AccommodationCard from '@/components/AccommodationCard';
 
 function findToday(): { section: Section; day: DayData; dayNumber: number } | null {
   const tripStart = new Date(TRIP.startDate);
@@ -41,48 +43,71 @@ export default function TodayView() {
 
   const { section, day, dayNumber } = today;
   const nextTransit = getNextTransit(new Date());
+  const accommodation = getAccommodation(new Date(day.date));
 
   return (
-    <main style={{ padding: '24px 16px', maxWidth: 430, margin: '0 auto' }}>
-      <header style={{ marginBottom: 24 }}>
-        <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', marginBottom: 4 }}>
-          {section.name}
-        </h1>
-        <p style={{ fontSize: '0.875rem', color: 'var(--color-text-muted)' }}>
-          Day {dayNumber} &middot; {day.label}
-        </p>
-      </header>
+    <SectionThemeProvider sectionId={section.id}>
+      <main style={{ padding: '24px 16px', maxWidth: 430, margin: '0 auto' }}>
+        <header
+          style={{
+            backgroundColor: 'var(--section-accent)',
+            color: '#fff',
+            padding: '16px',
+            borderRadius: 8,
+            marginBottom: 24,
+          }}
+        >
+          <h1 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.5rem', marginBottom: 4 }}>
+            {section.name}
+          </h1>
+          <p style={{ fontSize: '0.875rem', opacity: 0.9 }}>
+            Day {dayNumber} &middot; {day.label}
+          </p>
+        </header>
 
-      {nextTransit && (
-        <section style={{ marginBottom: 24 }}>
+        {nextTransit && (
+          <section style={{ marginBottom: 24 }}>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', marginBottom: 12 }}>
+              Next Transit
+            </h2>
+            <TransitCard {...nextTransit} />
+          </section>
+        )}
+
+        <section>
           <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', marginBottom: 12 }}>
-            Next Transit
+            Activities
           </h2>
-          <TransitCard {...nextTransit} />
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            {day.activities.map((activity, i) => (
+              <li
+                key={i}
+                style={{
+                  padding: '12px 0',
+                  borderBottom: '1px solid #e5e7eb',
+                }}
+              >
+                <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'capitalize' }}>
+                  {activity.timeOfDay}
+                </span>
+                <p>{activity.description}</p>
+              </li>
+            ))}
+          </ul>
         </section>
-      )}
 
-      <section>
-        <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', marginBottom: 12 }}>
-          Activities
-        </h2>
-        <ul style={{ listStyle: 'none', padding: 0 }}>
-          {day.activities.map((activity, i) => (
-            <li
-              key={i}
-              style={{
-                padding: '12px 0',
-                borderBottom: '1px solid #e5e7eb',
-              }}
-            >
-              <span style={{ fontSize: '0.75rem', color: 'var(--color-text-muted)', textTransform: 'capitalize' }}>
-                {activity.timeOfDay}
-              </span>
-              <p>{activity.description}</p>
-            </li>
-          ))}
-        </ul>
-      </section>
-    </main>
+        {accommodation && (
+          <section style={{ marginTop: 24 }}>
+            <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', marginBottom: 12 }}>
+              Accommodation
+            </h2>
+            <AccommodationCard
+              hotelName={accommodation.hotelName}
+              address={accommodation.address}
+            />
+          </section>
+        )}
+      </main>
+    </SectionThemeProvider>
   );
 }
