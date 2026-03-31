@@ -1,10 +1,10 @@
 {
   "project_name": "TripCompanion",
   "prd_issue_number": null,
-  "last_updated": "2026-04-01T05:15:00Z",
+  "last_updated": "2026-04-01T07:45:00Z",
   "current_phase": "Phase 3: Parallel TDD Execution",
   "overall_progress": {
-    "completed": 4,
+    "completed": 5,
     "total": 6
   },
   "status_legend": ["Not Started", "In Progress", "Completed", "Blocked", "Deferred"],
@@ -335,7 +335,7 @@
           "name": "Day Detail View",
           "issue_number": 5,
           "execution_type": "AFK",
-          "status": "Not Started",
+          "status": "Completed",
           "scope": "Day Detail page at /day/[date], back nav, transit cards + activities + accommodation for a single day",
           "acceptance_criteria": [
             "Route /day/[date] renders Day Detail View for the given date",
@@ -349,15 +349,23 @@
           ],
           "eval_ids": [
             "FE-006-HP-01",
+            "FE-006-EC-01",
             "INT-004"
           ],
-          "eval_results": {},
+          "eval_results": {
+            "FE-006-HP-01": "PASS",
+            "FE-006-EC-01": "PASS",
+            "INT-004": "PASS"
+          },
           "files_to_modify": [
             "src/app/day/[date]/page.tsx",
             "src/__tests__/day-detail-view.test.tsx"
           ],
-          "files_touched": [],
-          "completion_notes": "",
+          "files_touched": [
+            "src/app/day/[date]/page.tsx",
+            "src/__tests__/day-detail-view.test.tsx"
+          ],
+          "completion_notes": "11 new tests (day header, back nav, transit cards, activities, accommodation, no-transit day, section theming, invalid date redirect, timeline integration). All 3 evals PASS. Reuses TransitCard, AccommodationCard, SectionThemeProvider. generateStaticParams for static export.",
           "agent_instructions": "Use getDayData(date) + getAccommodation(date) + getSection(date) for data; generate static params from getAllSections() for static export; redirect to /timeline for invalid dates; reuse TransitCard and AccommodationCard components",
           "context_needed": ["docs/architecture.md", "src/lib/trip-data.ts", "src/components/TransitCard.tsx", "src/components/AccommodationCard.tsx", "src/components/SectionThemeProvider.tsx"],
           "branch": "feature/task-1.5",
@@ -366,8 +374,10 @@
           "max_turns": 50,
           "rollback_count": 0,
           "rollback_reason": null,
-          "test_files": [],
-          "completed": null
+          "test_files": [
+            "src/__tests__/day-detail-view.test.tsx"
+          ],
+          "completed": "2026-04-01T07:45:00Z"
         },
         {
           "id": "1.6",

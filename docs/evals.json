@@ -1,11 +1,11 @@
 {
   "project_name": "TripCompanion",
-  "last_updated": "2026-03-31T21:19:00Z",
+  "last_updated": "2026-04-01T07:45:00Z",
   "summary": {
     "total_scenarios": 48,
-    "passing": 29,
+    "passing": 31,
     "failing": 0,
-    "not_yet_tested": 19
+    "not_yet_tested": 17
   },
   "rules": {
     "when_generated": "Phase 2, after architecture.md is approved, before implementation begins",
@@ -187,8 +187,8 @@
           "scenario": "Day with no transit events",
           "input_setup": "User taps a day that has activities but no transit events.",
           "expected_output": "Day Detail View renders activities and accommodation. No transit cards shown.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/day-detail-view.test.tsx",
+          "status": "PASS"
         }
       ],
       "failure_modes": []
@@ -496,8 +496,8 @@
       "scenario": "Day Detail View receives day identifier from Timeline navigation and loads correct data",
       "components_involved": ["Timeline View", "Day Detail View", "Trip Data Store"],
       "expected_behaviour": "Tapping a day row in Timeline passes the date to Day Detail route. Day Detail calls getDayData(date) and getAccommodation(date), renders all transit cards, activities, and accommodation for that specific date.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/day-detail-view.test.tsx",
+      "status": "PASS"
     },
     {
       "id": "INT-005",
@@ -634,6 +634,8 @@
     { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-013-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: trip-data.ts exports typed query functions" },
     { "date": "2026-03-31", "task_id": "1.1", "eval_id": "FE-014-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: 4 sections with 2+ days each" },
     { "date": "2026-03-31", "task_id": "1.1", "eval_id": "INT-001", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Today View composes Trip Data Store + Timezone Engine" },
-    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "INT-007", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Travel day assigned to departing section" }
+    { "date": "2026-03-31", "task_id": "1.1", "eval_id": "INT-007", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Travel day assigned to departing section" },
+    { "date": "2026-04-01", "task_id": "1.5", "eval_id": "FE-006-EC-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Day with no transit shows activities and accommodation only" },
+    { "date": "2026-04-01", "task_id": "1.5", "eval_id": "INT-004", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Day Detail loads correct data from timeline navigation" }
   ]
 }
