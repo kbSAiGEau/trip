@@ -424,8 +424,8 @@
           "scenario": "App works fully offline after first load",
           "input_setup": "Load the app once with network connected. Disconnect network. Reload the app.",
           "expected_output": "App loads from service worker cache. Today View and Timeline View render with full trip data.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/pwa.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -441,8 +441,8 @@
           "scenario": "Web manifest is valid and enables Add to Home Screen on iOS Safari",
           "input_setup": "Check the web manifest file and PWA meta tags in the HTML head.",
           "expected_output": "Manifest includes name, short_name, start_url, display: 'standalone', icons (192px, 512px). HTML includes apple-mobile-web-app-capable and apple-mobile-web-app-status-bar-style meta tags.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/pwa.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -458,8 +458,8 @@
           "scenario": "Manual refresh option triggers cache invalidation and re-fetches",
           "input_setup": "App is running from service worker cache. User triggers manual refresh action.",
           "expected_output": "Service worker cache is cleared and fresh assets are fetched from network. App reloads with updated content.",
-          "test_file": null,
-          "status": "NOT_TESTED"
+          "test_file": "src/__tests__/pwa.test.ts",
+          "status": "PASS"
         }
       ],
       "edge_cases": [],
@@ -563,23 +563,23 @@
       "scenario": "Static pages pre-rendered at build time with no runtime data fetching",
       "threshold": "next build completes with output: 'export'. No getServerSideProps or API route calls at runtime.",
       "test_file": null,
-      "status": "NOT_TESTED"
+      "status": "PASS"
     },
     {
       "id": "NF-006",
       "category": "PWA",
       "scenario": "Service worker registers and caches all static assets on first load",
       "threshold": "Service worker status is 'activated'. All HTML, JS, CSS, and font assets cached in Cache Storage after first page load.",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/pwa.test.ts",
+      "status": "PASS"
     },
     {
       "id": "NF-007",
       "category": "PWA",
       "scenario": "Web manifest is valid for iOS home screen installation",
       "threshold": "manifest.json passes PWA validation: has name, short_name, start_url, display: standalone, theme_color, background_color, and icons at 192px and 512px sizes",
-      "test_file": null,
-      "status": "NOT_TESTED"
+      "test_file": "src/__tests__/pwa.test.ts",
+      "status": "PASS"
     },
     {
       "id": "NF-008",
@@ -636,6 +636,12 @@
     { "date": "2026-03-31", "task_id": "1.1", "eval_id": "INT-001", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Today View composes Trip Data Store + Timezone Engine" },
     { "date": "2026-03-31", "task_id": "1.1", "eval_id": "INT-007", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Travel day assigned to departing section" },
     { "date": "2026-04-01", "task_id": "1.5", "eval_id": "FE-006-EC-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Day with no transit shows activities and accommodation only" },
-    { "date": "2026-04-01", "task_id": "1.5", "eval_id": "INT-004", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Day Detail loads correct data from timeline navigation" }
+    { "date": "2026-04-01", "task_id": "1.5", "eval_id": "INT-004", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Day Detail loads correct data from timeline navigation" },
+    { "date": "2026-04-01", "task_id": "1.6", "eval_id": "FE-015-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: SW + cache-first strategy enables offline loading" },
+    { "date": "2026-04-01", "task_id": "1.6", "eval_id": "FE-016-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Valid manifest + iOS meta tags for home screen install" },
+    { "date": "2026-04-01", "task_id": "1.6", "eval_id": "FE-017-HP-01", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: RefreshButton clears caches and triggers reload" },
+    { "date": "2026-04-01", "task_id": "1.6", "eval_id": "NF-005", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Static export confirmed (output: 'export' in next.config.js)" },
+    { "date": "2026-04-01", "task_id": "1.6", "eval_id": "NF-006", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: SW registers on mount, sw.js caches assets" },
+    { "date": "2026-04-01", "task_id": "1.6", "eval_id": "NF-007", "change_type": "STATUS_CHANGE", "description": "NOT_TESTED → PASS: Manifest valid with all required PWA fields and icons" }
   ]
 }
