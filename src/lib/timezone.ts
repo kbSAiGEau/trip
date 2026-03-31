@@ -38,3 +38,21 @@ export function formatLocalTime(isoTime: string, timezone: string): string {
   const [hours, minutes] = timePart.split(':');
   return `${hours}:${minutes}`;
 }
+
+/**
+ * Returns whether the given date falls before, during, or after the trip.
+ * Comparison is date-only (ignores time component).
+ */
+export function getTripStatus(
+  today: Date,
+  tripStart: Date,
+  tripEnd: Date,
+): 'before' | 'during' | 'after' {
+  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
+  const startUTC = Date.UTC(tripStart.getFullYear(), tripStart.getMonth(), tripStart.getDate());
+  const endUTC = Date.UTC(tripEnd.getFullYear(), tripEnd.getMonth(), tripEnd.getDate());
+
+  if (todayUTC < startUTC) return 'before';
+  if (todayUTC > endUTC) return 'after';
+  return 'during';
+}
