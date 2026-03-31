@@ -438,6 +438,26 @@ export function getDayData(date: Date): DayData | null {
   return null;
 }
 
+export function getNextTransit(from: Date): TransitEvent | null {
+  const fromTime = from.getTime();
+  let earliest: { event: TransitEvent; time: number } | null = null;
+
+  for (const section of sections) {
+    for (const day of section.days) {
+      for (const transit of day.transit) {
+        const departureTime = new Date(transit.origin.time).getTime();
+        if (departureTime > fromTime) {
+          if (!earliest || departureTime < earliest.time) {
+            earliest = { event: transit, time: departureTime };
+          }
+        }
+      }
+    }
+  }
+
+  return earliest?.event ?? null;
+}
+
 export function getAccommodation(date: Date): Accommodation | null {
   const section = getSection(date);
   return section?.accommodation ?? null;

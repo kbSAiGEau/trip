@@ -1,8 +1,9 @@
 'use client';
 
-import { getAllSections, getSection, getDayData, TRIP } from '@/lib/trip-data';
+import { getAllSections, getSection, getDayData, getNextTransit, TRIP } from '@/lib/trip-data';
 import type { Section, DayData } from '@/lib/trip-data';
 import { getCumulativeDay, isToday, getTripStatus } from '@/lib/timezone';
+import TransitCard from '@/components/TransitCard';
 
 function findToday(): { section: Section; day: DayData; dayNumber: number } | null {
   const tripStart = new Date(TRIP.startDate);
@@ -39,6 +40,7 @@ export default function TodayView() {
   }
 
   const { section, day, dayNumber } = today;
+  const nextTransit = getNextTransit(new Date());
 
   return (
     <main style={{ padding: '24px 16px', maxWidth: 430, margin: '0 auto' }}>
@@ -50,6 +52,15 @@ export default function TodayView() {
           Day {dayNumber} &middot; {day.label}
         </p>
       </header>
+
+      {nextTransit && (
+        <section style={{ marginBottom: 24 }}>
+          <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', marginBottom: 12 }}>
+            Next Transit
+          </h2>
+          <TransitCard {...nextTransit} />
+        </section>
+      )}
 
       <section>
         <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.125rem', marginBottom: 12 }}>

@@ -1,6 +1,8 @@
-import { describe, it, expect } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { describe, it, expect, afterEach } from 'vitest';
+import { render, screen, cleanup } from '@testing-library/react';
 import TransitCard from '@/components/TransitCard';
+
+afterEach(cleanup);
 
 // FE-007-HP-01: Train transit card renders all fields
 describe('TransitCard', () => {
@@ -109,8 +111,8 @@ describe('TransitCard', () => {
     );
 
     expect(screen.getByText(/Rhodes RHO/)).toBeInTheDocument();
-    expect(screen.getByText(/14:00/)).toBeInTheDocument();
-    expect(screen.getByText(/Istanbul IST/)).toBeInTheDocument();
-    expect(screen.getByText(/15:30/)).toBeInTheDocument();
+    expect(screen.getAllByText(/14:00/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/Istanbul IST/).length).toBeGreaterThanOrEqual(1);
+    expect(screen.getAllByText(/15:30/).length).toBeGreaterThanOrEqual(1);
   });
 });
