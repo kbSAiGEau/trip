@@ -1,12 +1,14 @@
+function dateOnlyUTC(d: Date): number {
+  return Date.UTC(d.getFullYear(), d.getMonth(), d.getDate());
+}
+
 /**
  * Returns the cumulative day number (1-based) from the trip start date.
  * Day 1 = tripStartDate.
  */
 export function getCumulativeDay(date: Date, tripStartDate: Date): number {
   const msPerDay = 86_400_000;
-  const startUTC = Date.UTC(tripStartDate.getFullYear(), tripStartDate.getMonth(), tripStartDate.getDate());
-  const dateUTC = Date.UTC(date.getFullYear(), date.getMonth(), date.getDate());
-  return Math.floor((dateUTC - startUTC) / msPerDay) + 1;
+  return Math.floor((dateOnlyUTC(date) - dateOnlyUTC(tripStartDate)) / msPerDay) + 1;
 }
 
 /**
@@ -29,11 +31,7 @@ export function isToday(dayDate: string, timezone: string): boolean {
  * Formats an ISO datetime string (without Z suffix) as HH:MM in the given
  * IANA timezone. The input is treated as a wall-clock time in that timezone.
  */
-export function formatLocalTime(isoTime: string, timezone: string): string {
-  // Parse as local wall-clock time in the target timezone.
-  // We construct a Date from the ISO string (interpreted as UTC) then use
-  // Intl to format in the target timezone. But since the input IS the local
-  // time, we just extract HH:MM directly.
+export function formatLocalTime(isoTime: string, _timezone: string): string {
   const [, timePart] = isoTime.split('T');
   const [hours, minutes] = timePart.split(':');
   return `${hours}:${minutes}`;
@@ -48,9 +46,9 @@ export function getTripStatus(
   tripStart: Date,
   tripEnd: Date,
 ): 'before' | 'during' | 'after' {
-  const todayUTC = Date.UTC(today.getFullYear(), today.getMonth(), today.getDate());
-  const startUTC = Date.UTC(tripStart.getFullYear(), tripStart.getMonth(), tripStart.getDate());
-  const endUTC = Date.UTC(tripEnd.getFullYear(), tripEnd.getMonth(), tripEnd.getDate());
+  const todayUTC = dateOnlyUTC(today);
+  const startUTC = dateOnlyUTC(tripStart);
+  const endUTC = dateOnlyUTC(tripEnd);
 
   if (todayUTC < startUTC) return 'before';
   if (todayUTC > endUTC) return 'after';
