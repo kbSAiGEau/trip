@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getCumulativeDay, isToday, formatLocalTime } from '@/lib/timezone';
+import { getCumulativeDay, isToday, formatLocalTime, getTripStatus } from '@/lib/timezone';
 
 describe('getCumulativeDay', () => {
   const tripStart = new Date('2026-07-12');
@@ -73,5 +73,35 @@ describe('formatLocalTime', () => {
   it('formats time in AEST (Australia/Sydney)', () => {
     const result = formatLocalTime('2026-07-12T06:00', 'Australia/Sydney');
     expect(result).toBe('06:00');
+  });
+});
+
+describe('getTripStatus', () => {
+  const tripStart = new Date('2026-07-12');
+  const tripEnd = new Date('2026-08-02');
+
+  it('returns "before" when today is before trip start', () => {
+    const today = new Date('2026-07-10');
+    expect(getTripStatus(today, tripStart, tripEnd)).toBe('before');
+  });
+
+  it('returns "during" on the first day of the trip', () => {
+    const today = new Date('2026-07-12');
+    expect(getTripStatus(today, tripStart, tripEnd)).toBe('during');
+  });
+
+  it('returns "during" mid-trip', () => {
+    const today = new Date('2026-07-20');
+    expect(getTripStatus(today, tripStart, tripEnd)).toBe('during');
+  });
+
+  it('returns "during" on the last day of the trip', () => {
+    const today = new Date('2026-08-02');
+    expect(getTripStatus(today, tripStart, tripEnd)).toBe('during');
+  });
+
+  it('returns "after" when today is after trip end', () => {
+    const today = new Date('2026-08-10');
+    expect(getTripStatus(today, tripStart, tripEnd)).toBe('after');
   });
 });
